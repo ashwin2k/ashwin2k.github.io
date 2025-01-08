@@ -1,0 +1,585 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome file</title>
+    <link rel="stylesheet" href="https://stackedit.io/style.css" />
+    <link rel="stylesheet" href="styles/styles.css" />
+  </head>
+
+  <body class="stackedit">
+    <header class="header">
+      <nav class="nav-container">
+        <a href="../index.html" class="site-title">Ashwin Kumar Udayakumar</a>
+        <a href="../index.html" class="back-link">← Back to Home</a>
+      </nav>
+    </header>
+    <div class="stackedit__html">
+      <h3 id="optimizing-heavy-models-with-early-exit-branches">
+        Optimizing heavy models with early exit branches
+      </h3>
+      <p>
+        Everyday models get heavier and heavier (in terms of learnable
+        parameters). For example, LEMON_large has 200M parameters and GPT-3 has
+        over 175 billion parameters!
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*8Wpqq9ko4vVWwZq3XK0oYw.jpeg"
+          alt=""
+        />
+      </p>
+      <p>
+        Though they give State-of-the-Art Performance, how well are they
+        deployed today? This calls for an efficient and faster method for
+        training and inferring. So, we explore various methods through which we
+        can speed up compute-intensive networks while preserving accuracy!
+      </p>
+      <p>This blog will cover 2 papers:</p>
+      <ol>
+        <li>
+          Fei, Zhengcong, et al. “DeeCap: Dynamic Early Exiting for Efficient
+          Image Captioning.”
+          <em
+            >Proceedings of the IEEE/CVF Conference on Computer Vision and
+            Pattern Recognition</em
+          >. 2022.
+          <a
+            href="https://openaccess.thecvf.com/content/CVPR2022/html/Fei_DeeCap_Dynamic_Early_Exiting_for_Efficient_Image_Captioning_CVPR_2022_paper.html"
+            >[paper link]</a
+          >
+        </li>
+        <li>
+          Wołczyk, M., Wójcik, B., Bałazy, K., Podolak, I. T., Tabor, J.,
+          Śmieja, M., &amp; Trzcinski, T. (2021). Zero Time Waste: Recycling
+          Predictions in Early Exit Neural Networks.
+          <em>Advances in Neural Information Processing Systems</em>,
+          <em>34</em>, 2516–2528.
+          <a
+            href="https://proceedings.neurips.cc/paper/2021/hash/149ef6419512be56a93169cd5e6fa8fd-Abstract.html"
+            >[paper link]</a
+          >
+        </li>
+      </ol>
+      <p>
+        Individual blog posts explaining these papers are given below as well:
+      </p>
+      <ol>
+        <li>
+          <a
+            href="https://medium.com/@ashwin102000/early-exiting-for-image-captioning-models-dfb42cc7a5d2"
+            >Early Exiting for Image Captioning Models</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://medium.com/@ashwin102000/going-green-by-recycling-predictions-8945f44d3a9c"
+            >Going green by recycling predictions!</a
+          >
+        </li>
+      </ol>
+      <p>
+        First, we cover “DeeCap: Dynamic Early Exiting for Efficient Image
+        Captioning”:
+      </p>
+      <h3 id="early-exiting-for-image-captioning-models">
+        Early Exiting for Image Captioning Models
+      </h3>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*cVgBdLpgyQ4GGTUnql5-Pw.jpeg"
+          alt=""
+        />
+      </p>
+      <p>
+        <strong><em>But first, — WHAT IS EARLY EXITING?</em></strong>
+      </p>
+      <p>
+        As described in this
+        <a href="https://arxiv.org/abs/1709.01686v1">paper</a> as “BranchyNet”,
+        these neural networks have exit branches at specific locations
+        throughout the network.
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*7S3WYNcb8iuGGx9rDWgaUQ.png"
+          alt=""
+        />
+      </p>
+      <p>
+        Source:
+        <a href="https://arxiv.org/pdf/1709.01686v1.pdf"
+          >https://arxiv.org/pdf/1709.01686v1.pdf</a
+        >
+      </p>
+      <h3 id="what’s-the-main-idea-of-these-branches-then">
+        What’s the main idea of these branches then?
+      </h3>
+      <p>
+        Suppose you have 100 layers in a neural network. After passing the input
+        image through the input layer, it must go through all layers to generate
+        an output.
+        <strong
+          >But, you realize that for some samples, you can classify them
+          accurately after just passing through some <em>n</em> layers (for
+          example, 5 layers).</strong
+        >
+        In this case, feed-forward passes through all other layers is wasteful
+        in terms of computational resources. So, we exit at the
+        <em>nth</em> layer through a branch.
+      </p>
+      <h4
+        id="this-is-especially-useful-in-large-networks-that-have-100s-of-layers-in-them."
+      >
+        This is especially useful in large networks that have 100s of layers in
+        them.
+      </h4>
+      <p>
+        It even allows large networks like AlexNet to be deployed for real-time
+        inferences. But when it comes to Image captioning models, there’s a
+        <strong><em>catch</em></strong
+        >.
+      </p>
+      <h3 id="image-captioning-models">Image Captioning Models</h3>
+      <p>
+        Image captioning models are different. They are basically
+        **Encoder-Decoder models — **I won’t go deep into the Encoder-Decoder
+        architecture, but on the surface level, the encoder part creates a
+        representation/intermediate vector based on the input, and the decoder
+        predicts the token(word) at each timestep.
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*UvACBSAvc_4YrKq92mzTMQ.png"
+          alt=""
+        />
+      </p>
+      <p>
+        Source:
+        <a
+          href="https://openaccess.thecvf.com/content/CVPR2022/papers/Fei_DeeCap_Dynamic_Early_Exiting_for_Efficient_Image_Captioning_CVPR_2022_paper.pdf"
+          >https://openaccess.thecvf.com/content/CVPR2022/papers/Fei_DeeCap_Dynamic_Early_Exiting_for_Efficient_Image_Captioning_CVPR_2022_paper.pdf</a
+        >
+      </p>
+      <p>
+        Speaking of these encoder-decoder models, can we also apply early-exit
+        branches to them?
+        <strong><em>Yes, but with some modifications.</em></strong>
+      </p>
+      <p>
+        These “modifications” are made possible, thanks to Fei, Zhengcong, et
+        al. and their research work
+        <a
+          href="https://openaccess.thecvf.com/content/CVPR2022/html/Fei_DeeCap_Dynamic_Early_Exiting_for_Efficient_Image_Captioning_CVPR_2022_paper.html"
+          >“DeeCap: Dynamic Early Exiting for Efficient Image Captioning”</a
+        >.
+      </p>
+      <p>
+        In this paper, the authors saw that conventional early exiting is not
+        possible in the case of <em>encoder-decoder</em> networks, since at the
+        shallow level, the representations generated by the decoder layers are
+        insufficient to predict tokens accurately, since they lack high-level
+        semantic information.
+      </p>
+      <p>
+        That is, let’s say that we are early exiting after <em>n</em> decoder
+        layers. The representation produced by those <em>n</em> decoders is not
+        sufficient to predict accurately, and we still need the outputs from the
+        deeper decoder layers after them.
+      </p>
+      <p>
+        <strong
+          >The workaround? Try to replicate the outputs of the deeper decoder
+          layers!</strong
+        >
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*yK9a0gyL2nnFl_CEoGAGvA.png"
+          alt=""
+        />
+      </p>
+      <p>
+        Source:
+        <a
+          href="https://openaccess.thecvf.com/content/CVPR2022/papers/Fei_DeeCap_Dynamic_Early_Exiting_for_Efficient_Image_Captioning_CVPR_2022_paper.pdf"
+          >https://openaccess.thecvf.com/content/CVPR2022/papers/Fei_DeeCap_Dynamic_Early_Exiting_for_Efficient_Image_Captioning_CVPR_2022_paper.pdf</a
+        >
+      </p>
+      <p>
+        First, let us assume that we are going to exit early at layer
+        <em>m.</em> So this means that for layer ‘k’, where k≤m we have done the
+        forward pass. And for every layer ‘k’ where k&gt;m, we have to replicate
+        the representations.
+      </p>
+      <p>
+        This <strong>replication</strong> is done with the help of imitation
+        learning. Let’s say we want to replicate the representation of layer k
+        where k&gt;m. The k-th imitation network paired with the k-th layer
+        inputs the truly hidden state h_m and outputs:
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/0*UWfSLbbJ9QyqDAyn"
+          alt=""
+        />
+      </p>
+      <p>Imitated Representation</p>
+      <p>
+        where MLP is a multi-layer perception. But these MLPs also need to be
+        trained accordingly, so that they can output the imitation
+        representations. This is done with the help of cosine similarity as our
+        main loss function.
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*PjkyaQ1BLmHN7QjjS9qn9w.png"
+          alt=""
+        />
+      </p>
+      <p>Cosine Similarity Loss Function</p>
+      <h3
+        id="now-we-found-a-way-to-get-the-output-of-the-deeper-decoder-layers-using-imitation-learning-and-how-to-train-the-mlp-that-facilitates-imitation-learning."
+      >
+        Now, we found a way to get the output of the deeper decoder layers using
+        imitation learning, and how to train the MLP that facilitates imitation
+        learning.
+      </h3>
+      <p>
+        But we are still a few steps away from achieving early-exiting. Now that
+        we have the representations of all the decoder layers, we can group them
+        into 2 kinds: <strong>h-shallow</strong> are the layers that performed
+        the actual feed-forward, and <strong>h-deep</strong> are the layers that
+        used imitation layers.
+      </p>
+      <p>
+        Now, we need to aggregate these h-shallow and h-deep layers. This
+        aggregation is done with the help of a
+        <strong>fusion strategy.</strong> There different fusion strategies that
+        we can use are:
+      </p>
+      <ol>
+        <li>Average Strategy</li>
+        <li>Concatenation Strategy</li>
+        <li>Attention-Pooling Strategy</li>
+        <li>Sequential Strategy</li>
+      </ol>
+      <p>
+        Now that we finished aggregating the h-shallow layers separately, and
+        h-deep layers separately, we now need to know how to
+        <strong>merge</strong> them.
+      </p>
+      <h3 id="this-calls-for-a-gate-decision-mechanism.">
+        This calls for a Gate Decision Mechanism.
+      </h3>
+      <p>So far we know these facts:</p>
+      <ol>
+        <li>
+          h-deep layers representations are produced using imitation networks.
+        </li>
+        <li>
+          h-shallow layers representations are produced by the actual
+          feed-forward mechanism.
+        </li>
+      </ol>
+      <p>
+        Since the h-shallow layers have actually <em>seen</em> the input data,
+        they are more likely to be reliable. So, we need to find a
+        <strong>balance factor</strong> to control how much information we need
+        from h-shallow vs h-deep. This balance factor <strong>α</strong> is
+        calculated using the following formula:
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*D3ezmx8Ph0vkaWnnyXdPSw.png"
+          alt=""
+        />
+      </p>
+      <p>
+        With this balancing factor, we can finally represent the final merged
+        information as
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*BwBoGvKHX_Gyvj2ItqNJPg.png"
+          alt=""
+        />
+      </p>
+      <p>
+        After applying the softmax function to zₘ, we can calculate the output
+        class distribution as
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*sKu2dKMsCVD-nEz2rYaDGg.png"
+          alt=""
+        />
+      </p>
+      <p>
+        But, we also need to dynamically learn the balancing factor. The
+        corresponding loss function is:
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*uzlaOkaz86lvROEZlqz79g.png"
+          alt=""
+        />
+      </p>
+      <p>Thus, the final training objective is:</p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*s565WG6MYg00e55HhDGO8Q.png"
+          alt=""
+        />
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*devyv3gEcR0fPd9co_Zq3g.gif"
+          alt=""
+        />
+      </p>
+      <h3 id="now-we-can-finally-talk-about-training-and-inference">
+        Now, we can finally talk about training and inference!
+      </h3>
+      <p>
+        Remember that we calculated <em>pₘ</em> previously? By calculating the
+        entropy of <em>pₘ</em> as H(pₘ), we calculate the prediction confidence
+        of the current token at layer m. We then compare the prediction
+        confidence with a manually selected threshold τ.
+        <strong
+          >Once this value is lower than the threshold, we can exit!</strong
+        >
+      </p>
+      <p>
+        Also, note that the shallow layer’s weights will be updated more
+        frequently because they are receiving more update signals than the deep
+        layers. So, while calculating the cross entropy loss of each layer, we
+        reweight them using the following equation:
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*KgK0bNwwzHWKdSJyxkjtcw.png"
+          alt=""
+        />
+      </p>
+      <p>
+        Added to this, the authors argue that updating all parameters at the
+        same time at each time step will damage the well-trained features during
+        fine-tuning. Therefore, they try to freeze the parameters at each layer
+        with a probability <em>p</em>, and it linearly decreases from 1 to 0
+        with depth.
+      </p>
+      <p>
+        <strong
+          >And that’s how we add anearly exit to encoder-decoder-based
+          models!</strong
+        >
+      </p>
+      <p>
+        Next, we look into another application of early-exit network, where we
+        try to <em>go green by recycling predictions!</em>
+        <strong
+          ><em
+            >(“Zero Time Waste: Recycling Predictions in Early Exit Neural
+            Networks”)</em
+          ></strong
+        >
+      </p>
+      <h3 id="going-green-by-recycling-predictions">
+        Going green by recycling predictions!
+      </h3>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/0*Ht3FOIxoIedCNGvm.jpeg"
+          alt=""
+        />
+      </p>
+      <p>
+        According to this
+        <a href="https://arxiv.org/abs/1906.02243">research</a>, training a
+        single deep-learning model can generate up to 626,155 pounds of CO2
+        emissions — that’s roughly equal to the total lifetime carbon footprint
+        of five cars! And not to mention that usually, deep learning models are
+        run several times while trying to predict a value, i.e. during
+        <strong>INFERENCE!</strong>
+      </p>
+      <p>
+        But, is there a way to reduce the carbon footprint of the inference
+        process? In this
+        <a
+          href="https://medium.com/@ashwin102000/early-exiting-for-image-captioning-models-dfb42cc7a5d2"
+          >blog</a
+        >
+        post, we saw can actually skip some layers during inference and still
+        achieve SoTA-level accuracy.
+        <strong
+          >But, did you also notice we also did less number of
+          computations?</strong
+        >
+      </p>
+      <p>
+        According to Wołczyk, Maciej, et al. in this
+        <a
+          href="https://proceedings.neurips.cc/paper/2021/hash/149ef6419512be56a93169cd5e6fa8fd-Abstract.html"
+          >paper</a
+        >, we can further reduce the number of computations — while also
+        increasing the accuracy!
+      </p>
+      <h3 id="the-argument">The Argument:</h3>
+      <p>
+        This paper makes an important argument that while trying to exit early
+        in a Convolutional Neural Network, sometimes we discard the output if it
+        is below a threshold, but those discarded outputs may contain useful
+        information.
+      </p>
+      <p>
+        Thus, we can recycle those discarded outputs to feed the internal
+        classifier in the next early exit branch with useful information.
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/0*9tuW1D4_vQ9x-g-u"
+          alt=""
+        />
+      </p>
+      <p>
+        Network Overview. Source:
+        <a href="https://arxiv.org/abs/2106.05409"
+          >https://arxiv.org/abs/2106.05409</a
+        >
+      </p>
+      <p>
+        This is done with the help of cascade connections! The concept of
+        cascading is to keep stacking up the information from the previous ICs,
+        as we go deeper!
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/0*QbTtN4fjXLMj5zPc.png"
+          alt=""
+        />
+      </p>
+      <p>
+        Network Architecture. Source:
+        <a href="https://arxiv.org/abs/2106.05409"
+          >https://arxiv.org/abs/2106.05409</a
+        >
+      </p>
+      <p>
+        We know that at each branch connection, we have an Internal Classifier
+        that takes care of the feed-forward. After applying the softmax function
+        to these ICs, we can get the probabilities of each class. This is given
+        by the formula:
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/0*T1JN73ozVG_t2yXz"
+          alt=""
+        />
+      </p>
+      <p>
+        where g_ϕm is the mᵗʰ IC’s output and f_θm is the output from the hidden
+        layer m in the backbone model. That is, we receive information from both
+        the actual backbone model and the previous IC — thus capturing the
+        information that the previous IC learned too.
+      </p>
+      <h3 id="are-we-done-yet">Are we done yet?</h3>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/0*75zu6-Mh3y1ANClO.gif"
+          alt=""
+        />
+      </p>
+      <p>Almost there!</p>
+      <p>
+        There is one more way in which we can recycle our predictions — the
+        predictions themselves!
+      </p>
+      <p>
+        In the final stage of this model, they use <em>ensembling</em> to
+        combine the previous predictions. This is represented by the formula:
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/0*1ocZdtEeSo8SlIHL"
+          alt=""
+        />
+      </p>
+      <p>Probability of each output class</p>
+      <p>
+        Where pⱼ is the output of ICs, bₘ, and wₘ are trainable parameters, and
+        Zₘ makes sure that the sum of qₘ for all classes is equal to 1. ‘i’
+        represents the iᵗʰ class and j represent the layers up to current layer
+        m.
+      </p>
+      <p>
+        Once qₘ is greater than a particular threshold for any class i, we can
+        output the prediction, and thus exit early! Else, we feed it forward to
+        the next IC, and continue the computation.
+      </p>
+      <p><strong>Overview of this approach</strong></p>
+      <p>This approach does the following workarounds:</p>
+      <ol>
+        <li>
+          First, we feed forward the logits of the current Internal Classifier
+          to the next Internal Classifier
+        </li>
+        <li>
+          Next, we can aggregate/ensemble the previous IC’s prediction by using
+          the above formula
+        </li>
+      </ol>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/0*7235C_rYc-1A0EQU.gif"
+          alt=""
+        />
+      </p>
+      <p>The end!</p>
+      <blockquote>
+        <p>
+          Also, look into my friend’s blog on
+          <a
+            href="http://Optimizing%20Compute-Intensive%20Models%20using%20Model%20Pruning"
+            >“<strong
+              >Optimizing Compute-Intensive Models using Model Pruning”</strong
+            ></a
+          >
+        </p>
+      </blockquote>
+      <h3 id="references">References:</h3>
+      <ol>
+        <li>
+          Fei, Zhengcong, et al. “DeeCap: Dynamic Early Exiting for Efficient
+          Image Captioning.”
+          <em
+            >Proceedings of the IEEE/CVF Conference on Computer Vision and
+            Pattern Recognition</em
+          >. 2022.
+        </li>
+        <li>
+          Teerapittayanon, Surat, Bradley McDanel, and Hsiang-Tsung Kung.
+          “Branchynet: Fast inference via early exiting from deep neural
+          networks.”
+          <em
+            >2016 23rd International Conference on Pattern Recognition
+            (ICPR)</em
+          >. IEEE, 2016.
+        </li>
+        <li>
+          Strubell, E., Ganesh, A., &amp; McCallum, A. (2019). Energy and policy
+          considerations for deep learning in NLP.
+          <em>arXiv preprint arXiv:1906.02243</em>.
+        </li>
+        <li>
+          Wołczyk, M., Wójcik, B., Bałazy, K., Podolak, I. T., Tabor, J.,
+          Śmieja, M., &amp; Trzcinski, T. (2021). Zero Time Waste: Recycling
+          Predictions in Early Exit Neural Networks.
+          <em>Advances in Neural Information Processing Systems</em>,
+          <em>34</em>, 2516–2528.
+        </li>
+      </ol>
+    </div>
+  </body>
+</html>

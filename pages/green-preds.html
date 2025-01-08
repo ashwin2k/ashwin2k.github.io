@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome file</title>
+    <link rel="stylesheet" href="https://stackedit.io/style.css" />
+    <link rel="stylesheet" href="styles/styles.css" />
+  </head>
+
+  <body class="stackedit">
+    <header class="header">
+      <nav class="nav-container">
+        <a href="../index.html" class="site-title">Ashwin Kumar Udayakumar</a>
+        <a href="../index.html" class="back-link">← Back to Home</a>
+      </nav>
+    </header>
+    <div class="stackedit__html">
+      <h3 id="going-green-by-recycling-predictions">
+        Going green by recycling predictions!
+      </h3>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*r1XLiSs8efK5FK9J75_gZw.jpeg"
+          alt=""
+        />
+      </p>
+      <p>
+        According to this
+        <a href="https://arxiv.org/abs/1906.02243">research</a>, training a
+        single deep-learning model can generate up to 626,155 pounds of CO2
+        emissions — that’s roughly equal to the total lifetime carbon footprint
+        of five cars! And not to mention that usually, deep learning models are
+        run several times while trying to predict a value, i.e. during
+        <strong>INFERENCE!</strong>
+      </p>
+      <p>
+        But, is there a way to reduce the carbon footprint of the inference
+        process? In this
+        <a
+          href="https://medium.com/@ashwin102000/early-exiting-for-image-captioning-models-dfb42cc7a5d2"
+          >blog</a
+        >
+        post, we saw can actually skip some layers during inference and still
+        achieve SoTA-level accuracy.
+        <strong
+          >But, did you also notice we also did less number of
+          computations?</strong
+        >
+      </p>
+      <p>
+        According to Wołczyk, Maciej, et al. in this
+        <a
+          href="https://proceedings.neurips.cc/paper/2021/hash/149ef6419512be56a93169cd5e6fa8fd-Abstract.html"
+          >paper</a
+        >, we can further reduce the number of computations — while also
+        increasing the accuracy!
+      </p>
+      <h3 id="the-argument">The Argument:</h3>
+      <p>
+        This paper makes an important argument that while trying to exit early
+        in a Convolutional Neural Network, sometimes we discard the output if it
+        is below a threshold, but those discarded outputs may contain useful
+        information.
+      </p>
+      <p>
+        Thus, we can recycle those discarded outputs to feed the internal
+        classifier in the next early exit branch with useful information.
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/0*MOm5uqObxAnSDkoR"
+          alt=""
+        />
+      </p>
+      <p>
+        Network Overview. Source:
+        <a href="https://arxiv.org/abs/2106.05409"
+          >https://arxiv.org/abs/2106.05409</a
+        >
+      </p>
+      <p>
+        This is done with the help of cascade connections! The concept of
+        cascading is to keep stacking up the information from the previous ICs,
+        as we go deeper!
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*key55mdg2TLeaS16fsBs2Q.png"
+          alt=""
+        />
+      </p>
+      <p>
+        Network Architecture. Source:
+        <a href="https://arxiv.org/abs/2106.05409"
+          >https://arxiv.org/abs/2106.05409</a
+        >
+      </p>
+      <p>
+        We know that at each branch connection, we have an Internal Classifier
+        that takes care of the feed-forward. After applying the softmax function
+        to these ICs, we can get the probabilities of each class. This is given
+        by the formula:
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/0*TYcueZGabB5wKdZY"
+          alt=""
+        />
+      </p>
+      <p>
+        where g_ϕm is the mᵗʰ IC’s output and f_θm is the output from the hidden
+        layer m in the backbone model. That is, we receive information from both
+        the actual backbone model and the previous IC — thus capturing the
+        information that the previous IC learned too.
+      </p>
+      <h3 id="are-we-done-yet"><strong>Are we done yet?</strong></h3>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/1*UHm3_Pu_N4JPMaQ8m4VLmw.gif"
+          alt=""
+        />
+      </p>
+      <p>Almost there!</p>
+      <p>
+        There is one more way in which we can recycle our predictions — the
+        predictions themselves!
+      </p>
+      <p>
+        In the final stage of this model, they use <em>ensembling</em> to
+        combine the previous predictions. This is represented by the formula:
+      </p>
+      <p>
+        <img
+          src="https://cdn-images-1.medium.com/max/1000/0*k96WEAtRcVWSyIY4"
+          alt=""
+        />
+      </p>
+      <p>Probability of each output class</p>
+      <p>
+        Where pⱼ is the output of ICs, bₘ, and wₘ are trainable parameters, and
+        Zₘ makes sure that the sum of qₘ for all classes is equal to 1. ‘i’
+        represents the iᵗʰ class and j represent the layers up to current layer
+        m.
+      </p>
+      <p>
+        Once qₘ is greater than a particular threshold for any class i, we can
+        output the prediction, and thus exit early! Else, we feed it forward to
+        the next IC, and continue the computation.
+      </p>
+      <h3 id="conclusion">Conclusion:</h3>
+      <p>This approach does the following workarounds:</p>
+      <ol>
+        <li>
+          First, we feed forward the logits of the current Internal Classifier
+          to the next Internal Classifier
+        </li>
+        <li>
+          Next, we can aggregate/ensemble the previous IC’s prediction by using
+          the above formula
+        </li>
+      </ol>
+      <p>The end!</p>
+      <h3 id="references">References:</h3>
+      <ol>
+        <li>
+          Strubell, E., Ganesh, A., &amp; McCallum, A. (2019). Energy and policy
+          considerations for deep learning in NLP.
+          <em>arXiv preprint arXiv:1906.02243</em>.
+        </li>
+        <li>
+          Wołczyk, M., Wójcik, B., Bałazy, K., Podolak, I. T., Tabor, J.,
+          Śmieja, M., &amp; Trzcinski, T. (2021). Zero Time Waste: Recycling
+          Predictions in Early Exit Neural Networks.
+          <em>Advances in Neural Information Processing Systems</em>,
+          <em>34</em>, 2516–2528.
+        </li>
+      </ol>
+    </div>
+  </body>
+</html>
