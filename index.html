@@ -64,6 +64,74 @@
       html {
         scroll-behavior: smooth;
       }
+      @keyframes typing {
+        from { width: 0 }
+        to { width: 100% }
+      }
+      
+      @keyframes blink {
+        50% { border-color: transparent }
+      }
+      
+      .typing-animation {
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        border-right: 3px solid #1a202c;
+        width: 0;
+        animation: 
+          typing 2s steps(30, end) forwards,
+          blink 1s step-end infinite;
+      }
+      .rotating-text {
+        position: relative;
+        height: 1.5em;
+        overflow: hidden;
+        margin: 0 auto;
+        text-align: center;
+      }
+      
+      .rotating-text span {
+        display: block;
+        position: absolute;
+        width: 100%;
+        left: 0;
+        right: 0;
+        opacity: 0;
+        animation: rotateWords 10s linear infinite 0s;
+        transform: translateY(50px);
+      }
+      
+      .rotating-text span:nth-child(2) {
+        animation-delay: 2s;
+      }
+      
+      .rotating-text span:nth-child(3) {
+        animation-delay: 4s;
+      }
+      
+      .rotating-text span:nth-child(4) {
+        animation-delay: 6s;
+      }
+      
+      .rotating-text span:nth-child(5) {
+        animation-delay: 8s;
+      }
+      
+      @keyframes rotateWords {
+        0%, 15% {
+          opacity: 0;
+          transform: translateY(25px);
+        }
+        20%, 35% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        40%, 100% {
+          opacity: 0;
+          transform: translateY(-25px);
+        }
+      }
     </style>
   </head>
   <body>
@@ -76,9 +144,17 @@
           class="rounded-full w-40 h-40 md:w-48 md:h-48 object-cover shadow-xl ring-4 ring-white mx-auto mb-8"
         />
         <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-          Ashwin Kumar Udayakumar
+          <span class="typing-animation">
+            Ashwin Kumar Udayakumar
+          </span>
         </h1>
-        <p class="text-xl text-gray-600 font-medium">AI Engineer & ex-YC Startups</p>
+        <p class="text-xl text-gray-600 font-medium rotating-text">
+          <span>AI Engineer & ex-YC Startups</span>
+          <span>Ex-DeasyLabs (Founding Engineer)</span>
+          <span>NYU Courant Grad (MS in CS, 2022-2024)</span>
+          <span>Ex-CTO of knowledge.com</span>
+          <span>Ex-Zoho</span>
+        </p>
         
         <div class="flex items-center justify-center gap-6 mt-6">
           <a href="https://github.com/ashwin2k" 
