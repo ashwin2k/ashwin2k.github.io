@@ -44,8 +44,25 @@
       .scroll-indicator:hover {
         opacity: 1;
       }
+      .scroll-indicator:hover svg {
+        animation-play-state: paused;
+      }
       .content-section {
         background: linear-gradient(180deg, #ffffff 0%, #f7fafc 100%);
+      }
+      @keyframes bounce {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(6px);
+        }
+      }
+      .scroll-indicator svg {
+        animation: bounce 2s infinite;
+      }
+      html {
+        scroll-behavior: smooth;
       }
     </style>
   </head>
@@ -187,7 +204,7 @@
                   <p class="text-sm text-gray-600 leading-relaxed">Deep Learning Systems project for efficient video search indexing</p>
                 </div>
                 <div class="w-24 h-24 flex-shrink-0">
-                  <img src="imgs/projects/video-sum.png" alt="" class="w-full h-full object-cover rounded-lg shadow-sm"/>
+                  <img src="imgs/video-summary.webp" alt="" class="w-full h-full object-cover rounded-lg shadow-sm"/>
                 </div>
               </a>
 
@@ -198,7 +215,7 @@
                   <p class="text-sm text-gray-600 leading-relaxed">A Chatbot built using LLamaindex that uses Web Context and RAG Techniques such as RAG Fusion</p>
                 </div>
                 <div class="w-24 h-24 flex-shrink-0">
-                  <img src="imgs/projects/spartan.png" alt="" class="w-full h-full object-cover rounded-lg shadow-sm"/>
+                  <img src="imgs/spartanchat.webp" alt="" class="w-full h-full object-cover rounded-lg shadow-sm"/>
                 </div>
               </a>
 
@@ -206,10 +223,10 @@
                  class="project-card rounded-xl p-6 border border-gray-100 hover:shadow-lg transition-all bg-gradient-to-br from-white to-gray-50 flex items-center justify-between">
                 <div class="flex-1 pr-6">
                   <h3 class="font-semibold mb-3 text-gray-800">PrintWatch</h3>
-                  <p class="text-sm text-gray-600 leading-relaxed">3D printing monitoring and analysis tool</p>
+                  <p class="text-sm text-gray-600 leading-relaxed">A Log monitoring tool for HPC systems</p>
                 </div>
                 <div class="w-24 h-24 flex-shrink-0">
-                  <img src="imgs/projects/printwatch.png" alt="" class="w-full h-full object-cover rounded-lg shadow-sm"/>
+                  <img src="imgs/log.webp" alt="" class="w-full h-full object-cover rounded-lg shadow-sm"/>
                 </div>
               </a>
 
@@ -217,7 +234,7 @@
                  class="project-card rounded-xl p-6 border border-gray-100 hover:shadow-lg transition-all bg-gradient-to-br from-white to-gray-50 flex items-center justify-between">
                 <div class="flex-1 pr-6">
                   <h3 class="font-semibold mb-3 text-gray-800">LibraAI</h3>
-                  <p class="text-sm text-gray-600 leading-relaxed">AI-powered library management system</p>
+                  <p class="text-sm text-gray-600 leading-relaxed">Voice-activated A.I. assistant to help you in emergency situations</p>
                 </div>
                 <div class="w-24 h-24 flex-shrink-0">
                   <img src="imgs/projects/libra.png" alt="" class="w-full h-full object-cover rounded-lg shadow-sm"/>
