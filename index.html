@@ -128,6 +128,309 @@
       background-color: var(--color-bg);
     }
 
+    /* Moon styles */
+    .moon {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #cccccc;
+      box-shadow: inset -15px -15px 0 rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(200, 200, 255, 0.6);
+      top: 15%;
+      right: 10%;
+      z-index: 1;
+      image-rendering: pixelated;
+      animation: moon-pulse 5s ease-in-out infinite;
+    }
+
+    @keyframes moon-pulse {
+      0%, 100% { 
+        box-shadow: inset -15px -15px 0 rgba(0, 0, 0, 0.2), 
+                   0 0 10px rgba(255, 255, 255, 0.4), 
+                   0 0 20px rgba(200, 200, 255, 0.6); 
+        transform: scale(1);
+      }
+      50% { 
+        box-shadow: inset -15px -15px 0 rgba(0, 0, 0, 0.2), 
+                   0 0 15px rgba(255, 255, 255, 0.7), 
+                   0 0 35px rgba(200, 200, 255, 0.9); 
+        transform: scale(1.02);
+      }
+    }
+
+    .moon::before {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: rgba(0, 0, 0, 0.15);
+      border-radius: 50%;
+      top: 15px;
+      left: 20px;
+    }
+
+    .moon::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      top: 35px;
+      left: 30px;
+    }
+
+    /* Planet styles */
+    .planet {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(30deg, #d1a567, #e6c89c);
+      box-shadow: inset -20px -10px 0 rgba(0, 0, 0, 0.3), 0 0 15px rgba(209, 165, 103, 0.5), 0 0 30px rgba(255, 220, 150, 0.7);
+      bottom: 20%;
+      left: 15%;
+      z-index: 1;
+      image-rendering: pixelated;
+      overflow: visible;
+      animation: planet-pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes planet-pulse {
+      0%, 100% { 
+        box-shadow: inset -20px -10px 0 rgba(0, 0, 0, 0.3), 
+                   0 0 15px rgba(209, 165, 103, 0.5), 
+                   0 0 30px rgba(255, 220, 150, 0.4); 
+        transform: scale(1);
+      }
+      50% { 
+        box-shadow: inset -20px -10px 0 rgba(0, 0, 0, 0.3), 
+                   0 0 25px rgba(209, 165, 103, 0.8), 
+                   0 0 50px rgba(255, 220, 150, 1); 
+        transform: scale(1.03);
+      }
+    }
+
+    /* Planet rings */
+    .planet::before {
+      content: "";
+      position: absolute;
+      width: 140px;
+      height: 20px;
+      background: linear-gradient(90deg, 
+        rgba(209, 165, 103, 0.2), 
+        rgba(209, 165, 103, 0.8),
+        rgba(209, 165, 103, 0.2));
+      border-radius: 50%;
+      top: 50%;
+      left: -30px;
+      transform: translateY(-50%) rotate(-20deg);
+      z-index: 0;
+      box-shadow: 0 0 5px rgba(209, 165, 103, 0.5), 0 0 15px rgba(255, 220, 150, 0.4);
+    }
+
+    /* Satellite styles */
+    .satellite {
+      position: absolute;
+      width: 24px;
+      height: 8px;
+      background-color: #ddd;
+      top: 30%;
+      left: 25%;
+      z-index: 1;
+      transform: rotate(45deg);
+      image-rendering: pixelated;
+    }
+
+    .satellite::before {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 3px;
+      background-color: #33ff66;
+      top: -8px;
+      left: 5px;
+      box-shadow: 0 0 4px rgba(51, 255, 102, 0.6);
+    }
+
+    .satellite::after {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 3px;
+      background-color: #33ff66;
+      bottom: -8px;
+      left: 5px;
+      box-shadow: 0 0 4px rgba(51, 255, 102, 0.6);
+    }
+
+    /* Solar panel styles */
+    .satellite .solar-panel-left,
+    .satellite .solar-panel-right {
+      position: absolute;
+      width: 16px;
+      height: 12px;
+      background-color: #4169E1;
+      border: 1px solid #6495ED;
+      top: -2px;
+    }
+
+    .satellite .solar-panel-left {
+      left: -18px;
+      transform: skewY(10deg);
+    }
+
+    .satellite .solar-panel-right {
+      right: -18px;
+      transform: skewY(-10deg);
+    }
+
+    /* Solar panel grid lines */
+    .satellite .solar-panel-left::before,
+    .satellite .solar-panel-right::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(90deg, transparent 30%, rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0.2) 33%, transparent 33%),
+                        linear-gradient(0deg, transparent 30%, rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0.2) 33%, transparent 33%);
+      background-size: 6px 6px;
+      opacity: 0.8;
+    }
+
+    /* Solar panel shine effect */
+    .satellite .solar-panel-left::after,
+    .satellite .solar-panel-right::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, 0.5) 80%, rgba(255, 255, 255, 0) 90%);
+      animation: panel-shine 4s linear infinite;
+    }
+
+    @keyframes panel-shine {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0.7; }
+    }
+
+    /* UFO styles */
+    .ufo {
+      position: absolute;
+      width: 48px;
+      height: 14px;
+      background-color: #aaaaaa;
+      border-radius: 50%;
+      z-index: 10;
+      image-rendering: pixelated;
+      overflow: visible;
+      box-shadow: 0 0 8px rgba(51, 255, 102, 0.4), 0 0 20px rgba(255, 255, 255, 0.2);
+      border: 2px solid #888888;
+      opacity: 1;
+      display: none; /* Temporarily hidden */
+    }
+
+    .ufo .dome {
+      position: absolute;
+      width: 20px;
+      height: 10px;
+      background-color: #cccccc;
+      border-radius: 50% 50% 0 0;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 1px solid #888888;
+      border-bottom: 0;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* UFO window lights */
+    .ufo .window {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background-color: #ffff00;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+      box-shadow: 0 0 4px rgba(255, 255, 0, 0.8);
+      animation: window-blink 3s infinite;
+      z-index: 11; /* Ensure window lights appear above UFO body */
+    }
+
+    .ufo .window:nth-child(2) {
+      left: 7px;
+      animation-delay: 0.5s;
+    }
+
+    .ufo .window:nth-child(3) {
+      left: 18px;
+      animation-delay: 1s;
+    }
+
+    .ufo .window:nth-child(4) {
+      right: 18px;
+      animation-delay: 1.5s;
+    }
+
+    .ufo .window:nth-child(5) {
+      right: 7px;
+      animation-delay: 2s;
+    }
+
+    @keyframes window-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .ufo::before {
+      content: "";
+      position: absolute;
+      width: 24px;
+      height: 8px;
+      background-color: #66ccff;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(102, 204, 255, 0.8);
+      border: 1px solid #5599dd;
+    }
+
+    .ufo::after {
+      content: "";
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: #66ccff;
+      border-radius: 0;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 6px rgba(102, 204, 255, 0.8), 0 0 15px rgba(102, 204, 255, 0.4);
+      animation: ufo-beam 2s infinite;
+      clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+      z-index: 9; /* Ensure beam is below UFO but above other elements */
+      opacity: 0.9; /* Slightly increased opacity */
+    }
+
+    @keyframes ufo-beam {
+      0%, 100% { 
+        height: 8px;
+        opacity: 0.8;
+        box-shadow: 0 0 6px rgba(102, 204, 255, 0.8);
+      }
+      50% { 
+        height: 24px;
+        opacity: 1;
+        box-shadow: 0 0 10px rgba(102, 204, 255, 1);
+      }
+    }
+
     .asteroid {
       position: absolute;
       width: 4px;
@@ -1079,6 +1382,12 @@
 
   <!-- Space Background -->
   <div class="space-container" id="space-container">
+    <!-- Moon element -->
+    <div class="moon"></div>
+    <!-- Planet element -->
+    <div class="planet"></div>
+    <!-- Satellite will be added via JavaScript -->
+    <!-- UFO will be added via JavaScript -->
     <!-- Spaceship will be added via JavaScript -->
   </div>
 
@@ -1093,6 +1402,187 @@
     spaceship.classList.add('spaceship');
     spaceContainer.appendChild(spaceship);
     
+    // Add satellite
+    const satellite = document.createElement('div');
+    satellite.classList.add('satellite');
+    spaceContainer.appendChild(satellite);
+    
+    // Add solar panels to satellite
+    const solarPanelLeft = document.createElement('div');
+    solarPanelLeft.classList.add('solar-panel-left');
+    satellite.appendChild(solarPanelLeft);
+    
+    const solarPanelRight = document.createElement('div');
+    solarPanelRight.classList.add('solar-panel-right');
+    satellite.appendChild(solarPanelRight);
+    
+    // Set initial satellite position
+    let satellitePosition = {
+      x: 25 + Math.random() * 20, // Random start position
+      y: 30 + Math.random() * 10
+    };
+    
+    // Update satellite position and animation
+    function animateSatellite() {
+      // Set initial position
+      satellite.style.left = `${satellitePosition.x}%`;
+      satellite.style.top = `${satellitePosition.y}%`;
+      
+      // Very slow orbital movement
+      let orbitAngle = Math.random() * Math.PI * 2; // Random start angle
+      let orbitSpeed = 0.0002; // Very slow movement
+      let orbitRadius = {
+        x: 15 + Math.random() * 5, // Orbit radius X
+        y: 10 + Math.random() * 3  // Orbit radius Y
+      };
+      let orbitCenter = {
+        x: 40, // Center of orbit X position
+        y: 40  // Center of orbit Y position
+      };
+      let rotationAngle = 0;
+      let rotationSpeed = 0.2; // Continuous rotation speed
+      
+      function moveSatellite() {
+        orbitAngle += orbitSpeed;
+        rotationAngle += rotationSpeed;
+        
+        // Calculate new position based on elliptical orbit
+        satellitePosition.x = orbitCenter.x + Math.cos(orbitAngle) * orbitRadius.x;
+        satellitePosition.y = orbitCenter.y + Math.sin(orbitAngle) * orbitRadius.y;
+        
+        // Update position
+        satellite.style.left = `${satellitePosition.x}%`;
+        satellite.style.top = `${satellitePosition.y}%`;
+        
+        // Update rotation - continuous 360-degree rotation
+        satellite.style.transform = `rotate(${rotationAngle}deg)`;
+        
+        // Continue animation
+        requestAnimationFrame(moveSatellite);
+      }
+      
+      // Start animation
+      moveSatellite();
+    }
+    
+    // Start satellite animation
+    animateSatellite();
+    
+    // Add UFO
+    const ufo = document.createElement('div');
+    ufo.classList.add('ufo');
+    
+    // Add dome to UFO
+    const dome = document.createElement('div');
+    dome.classList.add('dome');
+    ufo.appendChild(dome);
+    
+    // Add window lights to UFO
+    for (let i = 0; i < 4; i++) {
+      const window = document.createElement('div');
+      window.classList.add('window');
+      ufo.appendChild(window);
+    }
+    
+    spaceContainer.appendChild(ufo);
+    
+    // Set initial UFO position
+    let ufoPosition = {
+      x: 100, // Start visibly on-screen
+      y: 30
+    };
+    
+    // Ensure UFO is visible immediately
+    ufo.style.left = `${ufoPosition.x}px`;
+    ufo.style.top = `${ufoPosition.y}%`;
+    
+    // Update UFO position and animation
+    function animateUFO() {
+      // Movement parameters
+      let baseSpeedX = 1.2; // Forward speed
+      let speedX = baseSpeedX;
+      let time = 0;
+      
+      // Random path generation
+      let currentTargetY = ufoPosition.y;
+      let nextTargetY = 10 + Math.random() * 60;
+      let pathChangeTime = 0;
+      let pathChangeDuration = 5 + Math.random() * 7; // 5-12 seconds between path changes
+      
+      function moveUFO() {
+        time += 0.05;
+        pathChangeTime += 0.05;
+        
+        // Horizontal movement
+        ufoPosition.x += speedX;
+        
+        // Random vertical path logic
+        // Check if it's time to set a new vertical target
+        if (pathChangeTime >= pathChangeDuration) {
+          // Set new random target
+          nextTargetY = 10 + Math.random() * 60;
+          // Reset timer
+          pathChangeTime = 0;
+          // New random duration
+          pathChangeDuration = 5 + Math.random() * 7;
+        }
+        
+        // Smooth transition to next target Y position
+        const transitionSpeed = 0.008;
+        if (Math.abs(ufoPosition.y - nextTargetY) > 0.5) {
+          // Gradually move toward target with some noise
+          if (ufoPosition.y < nextTargetY) {
+            ufoPosition.y += transitionSpeed * (nextTargetY - ufoPosition.y) + (Math.random() * 0.1 - 0.05);
+          } else {
+            ufoPosition.y -= transitionSpeed * (ufoPosition.y - nextTargetY) + (Math.random() * 0.1 - 0.05);
+          }
+        }
+        
+        // Add small random jitters for more natural movement
+        ufoPosition.y += (Math.random() * 0.2 - 0.1);
+        
+        // Keep within absolute boundaries
+        if (ufoPosition.y < 5) ufoPosition.y = 5;
+        if (ufoPosition.y > 80) ufoPosition.y = 80;
+        
+        // Reset when it goes off-screen to the right
+        if (ufoPosition.x > window.innerWidth + 50) {
+          // Reset position to enter from left with completely random vertical position
+          ufoPosition.x = -50;
+          // Fully random vertical position anywhere in the visible area
+          ufoPosition.y = 5 + Math.random() * 75; // Random position between 5% and 80% of screen height
+          // Set next target to be different from entry position
+          do {
+            nextTargetY = 5 + Math.random() * 75;
+          } while (Math.abs(nextTargetY - ufoPosition.y) < 20); // Ensure sufficient distance to next target
+          
+          // Reset path change timer and randomize next change time
+          pathChangeTime = 0;
+          pathChangeDuration = 2 + Math.random() * 8; // 2-10 seconds until first path change after entry
+        }
+        
+        // Apply minimal forward-moving tilt plus some random wobble
+        const tilt = -3 + (Math.random() * 2 - 1); 
+        
+        // Update position with rotation
+        ufo.style.left = `${ufoPosition.x}px`;
+        ufo.style.top = `${ufoPosition.y}%`;
+        ufo.style.transform = `rotate(${tilt}deg)`;
+        
+        // Continue animation
+        requestAnimationFrame(moveUFO);
+      }
+      
+      // Start animation
+      moveUFO();
+    }
+    
+    // Start UFO animation
+    animateUFO();
+    
+    // Debug message for UFO visibility
+    console.log("UFO created at position:", ufoPosition.x, ufoPosition.y);
+    
     // Track current spaceship position (for shooting)
     let spaceshipPosition = { x: 0, y: 0 };
     
@@ -1100,7 +1590,7 @@
     for (let i = 0; i < numberOfStars; i++) {
       createStar();
     }
-    
+
     function createStar() {
       const star = document.createElement('div');
       star.classList.add('star');
