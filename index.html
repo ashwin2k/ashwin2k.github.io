@@ -115,6 +115,200 @@
       }
     }
 
+    /* Space background animation */
+    .space-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+      background-color: var(--color-bg);
+    }
+
+    .asteroid {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background-color: #aaa;
+      box-shadow: 0 0 2px rgba(200, 200, 200, 0.8);
+      image-rendering: pixelated;
+      transform-origin: center;
+    }
+
+    .asteroid.small {
+      width: 2px;
+      height: 2px;
+    }
+
+    .asteroid.medium {
+      width: 4px;
+      height: 4px;
+    }
+
+    .asteroid.large {
+      width: 6px;
+      height: 6px;
+    }
+
+    @keyframes float-diagonal {
+      0% {
+        transform: translate(-100px, -100px) rotate(0deg);
+      }
+      100% {
+        transform: translate(calc(100vw + 100px), calc(100vh + 100px)) rotate(360deg);
+      }
+    }
+
+    /* Star styles */
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background-color: #fff;
+      opacity: 0.6;
+      border-radius: 50%;
+    }
+
+    .star.bright {
+      width: 3px;
+      height: 3px;
+      opacity: 0.9;
+      box-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
+    }
+
+    .star.twinkle {
+      animation: twinkle 4s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    /* Projectile styles */
+    .projectile {
+      position: absolute;
+      width: 8px;
+      height: 2px;
+      background-color: #33ff66;
+      box-shadow: 0 0 6px rgba(51, 255, 102, 0.8);
+      z-index: 1;
+      transform-origin: center;
+    }
+
+    @keyframes projectile-move {
+      0% {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(100vw) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    /* Spaceship styles */
+    .spaceship {
+      position: absolute;
+      width: 40px;
+      height: 24px;
+      background-color: transparent;
+      background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 24" width="40" height="24"><rect x="8" y="10" width="24" height="4" fill="%2333ff66"/><rect x="6" y="8" width="2" height="8" fill="%2333ff66"/><rect x="32" y="8" width="2" height="8" fill="%2333ff66"/><rect x="4" y="6" width="2" height="12" fill="%2333ff66"/><rect x="34" y="6" width="2" height="12" fill="%2333ff66"/><rect x="16" y="6" width="8" height="2" fill="%2333ff66"/><rect x="16" y="16" width="8" height="2" fill="%2333ff66"/><rect x="36" y="10" width="4" height="4" fill="%2333ff66"/></svg>');
+      z-index: 1;
+      image-rendering: pixelated;
+      pointer-events: none;
+      animation: spaceship-move 60s linear infinite;
+      opacity: 0.8;
+    }
+
+    /* Spaceship booster */
+    .spaceship::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 4px;
+      background-color: #33ff66;
+      top: 10px;
+      left: -10px;
+      animation: booster-flicker 0.2s steps(2) infinite;
+      box-shadow: 0 0 8px 2px rgba(51, 255, 102, 0.6);
+    }
+
+    /* Booster particles */
+    .booster-particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background-color: #33ff66;
+      border-radius: 50%;
+      opacity: 0.8;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes particle-move {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translate(-20px, 0) scale(0.2);
+        opacity: 0;
+      }
+    }
+
+    /* Booster flame flicker animation */
+    @keyframes booster-flicker {
+      0% { 
+        width: 6px;
+        opacity: 0.8;
+      }
+      50% {
+        width: 10px;
+        opacity: 1;
+      }
+      100% {
+        width: 8px;
+        opacity: 0.9;
+      }
+    }
+
+    @keyframes spaceship-move {
+      0% {
+        left: -100px;
+        top: 30%;
+        transform: rotate(0deg);
+      }
+      20% {
+        left: 30%;
+        top: 20%;
+        transform: rotate(5deg);
+      }
+      40% {
+        left: 60%;
+        top: 50%;
+        transform: rotate(-5deg);
+      }
+      60% {
+        left: 40%;
+        top: 70%;
+        transform: rotate(3deg);
+      }
+      80% {
+        left: 20%;
+        top: 40%;
+        transform: rotate(-3deg);
+      }
+      100% {
+        left: 120%;
+        top: 30%;
+        transform: rotate(0deg);
+      }
+    }
+
     .container {
       width: 100%;
       max-width: var(--max-width);
@@ -893,82 +1087,126 @@
     </div>
   </section>
 
-  <!-- 8-bit Rain Background -->
-  <div class="rain-container" id="rain-container"></div>
+  <!-- Space Background -->
+  <div class="space-container" id="space-container">
+    <!-- Spaceship will be added via JavaScript -->
+  </div>
 
   <script>
-    // Generate random rain drops
-    const rainContainer = document.getElementById('rain-container');
-    const numberOfDrops = 100;
+    // Generate space elements
+    const spaceContainer = document.getElementById('space-container');
+    const numberOfAsteroids = 150; // Increased from 80
+    const numberOfStars = 200;
     
-    // Create initial raindrops
-    for (let i = 0; i < numberOfDrops; i++) {
-      createRaindrop();
+    // Add spaceship
+    const spaceship = document.createElement('div');
+    spaceship.classList.add('spaceship');
+    spaceContainer.appendChild(spaceship);
+    
+    // Track current spaceship position (for shooting)
+    let spaceshipPosition = { x: 0, y: 0 };
+    
+    // Create stars (static background elements)
+    for (let i = 0; i < numberOfStars; i++) {
+      createStar();
     }
     
-    function createRaindrop() {
-      const drop = document.createElement('div');
-      drop.classList.add('rain-drop');
+    function createStar() {
+      const star = document.createElement('div');
+      star.classList.add('star');
       
-      // Random horizontal position
+      // Random position
       const posX = Math.random() * 100;
-      drop.style.left = `${posX}%`;
+      const posY = Math.random() * 100;
+      star.style.left = `${posX}%`;
+      star.style.top = `${posY}%`;
       
-      // Random opacity for more 8-bit effect
-      const opacity = 0.3 + Math.random() * 0.7;
-      drop.style.opacity = opacity.toFixed(1);
-      
-      // Determine if this drop is a pixelated square (1 in 5 chance)
-      const isPixelated = Math.random() < 0.2;
-      
-      // Define duration variable outside conditionals
-      let duration;
-      
-      if (isPixelated) {
-        drop.classList.add('pixelated');
-        
-        // Pixelated drops have different animation and properties
-        const pixelSize = 3 + Math.floor(Math.random() * 3); // 3-5px
-        drop.style.width = `${pixelSize}px`;
-        drop.style.height = `${pixelSize}px`;
-        
-        // Different color for some pixelated drops
-        if (Math.random() < 0.3) {
-          const hue = Math.random() < 0.5 ? 120 : 160; // Green to cyan
-          drop.style.backgroundColor = `hsla(${hue}, 100%, 60%, ${opacity})`;
-        }
-        
-        // Use pixelated animation
-        drop.style.animationName = 'rain-fall-pixel';
-        
-        // Slightly slower for pixelated
-        duration = 2 + Math.random() * 3;
-        drop.style.animationDuration = `${duration}s`;
-      } else {
-        // Regular raindrop
-        // Random speed between 1s and 3s
-        duration = 1 + Math.random() * 2;
-        drop.style.animationDuration = `${duration}s`;
-        
-        // Random height (pixel art effect)
-        const height = 8 + Math.round(Math.random() * 3) * 2; // 8, 10, 12, or 14px
-        drop.style.height = `${height}px`;
+      // Some stars are brighter
+      if (Math.random() < 0.3) {
+        star.classList.add('bright');
       }
       
-      // Random delay
-      const delay = Math.random() * 2;
-      drop.style.animationDelay = `${delay}s`;
+      // Some stars twinkle
+      if (Math.random() < 0.4) {
+        star.classList.add('twinkle');
+        
+        // Random animation delay for twinkling
+        const delay = Math.random() * 4;
+        star.style.animationDelay = `${delay}s`;
+      }
       
       // Add to container
-      rainContainer.appendChild(drop);
-      
-      // Remove and replace drop after animation completes
-      setTimeout(() => {
-        drop.remove();
-        createRaindrop();
-      }, (duration + delay) * 1000);
+      spaceContainer.appendChild(star);
     }
     
+    // Create initial asteroids
+    for (let i = 0; i < numberOfAsteroids; i++) {
+      createAsteroid();
+    }
+    
+    function createAsteroid() {
+      const asteroid = document.createElement('div');
+      asteroid.classList.add('asteroid');
+      
+      // Random size class
+      const sizeRandom = Math.random();
+      if (sizeRandom < 0.6) {
+        asteroid.classList.add('small');
+      } else if (sizeRandom < 0.9) {
+        asteroid.classList.add('medium');
+      } else {
+        asteroid.classList.add('large');
+      }
+      
+      // Random position
+      const posX = Math.random() * 100;
+      const posY = Math.random() * 100;
+      asteroid.style.left = `${posX}%`;
+      asteroid.style.top = `${posY}%`;
+      
+      // Random opacity and color variation
+      const opacity = 0.5 + Math.random() * 0.5;
+      asteroid.style.opacity = opacity.toFixed(1);
+      
+      // Color variation - some asteroids have slight color
+      if (Math.random() < 0.2) {
+        // Brownish/redish asteroids
+        const hue = 30 + Math.random() * 30;
+        const saturation = 20 + Math.random() * 30;
+        asteroid.style.backgroundColor = `hsla(${hue}, ${saturation}%, 70%, ${opacity})`;
+      } else if (Math.random() < 0.1) {
+        // Bluish/icy asteroids
+        const hue = 200 + Math.random() * 40;
+        const saturation = 20 + Math.random() * 20;
+        asteroid.style.backgroundColor = `hsla(${hue}, ${saturation}%, 80%, ${opacity})`;
+      }
+      
+      // Animation
+      asteroid.style.animationName = 'float-diagonal';
+      
+      // Random speed between 10s and 40s
+      const duration = 10 + Math.random() * 30;
+      asteroid.style.animationDuration = `${duration}s`;
+      
+      // Random delay
+      const delay = Math.random() * 10;
+      asteroid.style.animationDelay = `-${delay}s`;
+      
+      // Random direction (rotate the animation path)
+      const angle = Math.random() * 360;
+      asteroid.style.animationTimingFunction = 'linear';
+      asteroid.style.transform = `rotate(${angle}deg)`;
+      
+      // Add to container
+      spaceContainer.appendChild(asteroid);
+      
+      // Remove and replace asteroid after animation completes
+      setTimeout(() => {
+        asteroid.remove();
+        createAsteroid();
+      }, (duration + delay) * 1000);
+    }
+
     // Background music controls
     const bgm = document.getElementById('bgm');
     const musicControl = document.getElementById('music-control');
@@ -1133,6 +1371,110 @@
         }
         lastTouchEnd = now;
       }, false);
+    });
+
+    // Function to create a projectile from the spaceship
+    function createProjectile() {
+      const rect = spaceship.getBoundingClientRect();
+      const spaceContainerRect = spaceContainer.getBoundingClientRect();
+      
+      // Get spaceship position relative to container
+      const shipX = (rect.right - spaceContainerRect.left) / spaceContainerRect.width * 100;
+      const shipY = (rect.top + rect.height/2 - spaceContainerRect.top) / spaceContainerRect.height * 100;
+      
+      // Save current spaceship position
+      spaceshipPosition.x = shipX;
+      spaceshipPosition.y = shipY;
+      
+      const projectile = document.createElement('div');
+      projectile.classList.add('projectile');
+      
+      // Position at the front of the spaceship
+      projectile.style.left = `${shipX}%`;
+      projectile.style.top = `${shipY}%`;
+      
+      // Animation
+      projectile.style.animationName = 'projectile-move';
+      projectile.style.animationDuration = '1.5s';
+      projectile.style.animationTimingFunction = 'linear';
+      
+      // Add to container
+      spaceContainer.appendChild(projectile);
+      
+      // Remove projectile after animation completes
+      setTimeout(() => {
+        projectile.remove();
+      }, 1500);
+    }
+    
+    // Auto-shoot every 2 seconds
+    const shootingInterval = setInterval(createProjectile, 2000);
+    
+    // Also shoot on click
+    document.addEventListener('click', function(event) {
+      // Only create a projectile if the spaceship is visible and not clicking on music control
+      if (spaceship.parentNode && !event.target.closest('.music-control')) {
+        createProjectile();
+      }
+    });
+
+    // Create booster particles
+    function createBoosterParticle() {
+      // Only proceed if spaceship is in the DOM
+      if (!spaceship.parentNode) return;
+      
+      const rect = spaceship.getBoundingClientRect();
+      const spaceContainerRect = spaceContainer.getBoundingClientRect();
+      
+      // Get spaceship position relative to container
+      const shipX = (rect.left - spaceContainerRect.left) / spaceContainerRect.width * 100;
+      const shipY = (rect.top + rect.height/2 - spaceContainerRect.top) / spaceContainerRect.height * 100;
+      
+      const particle = document.createElement('div');
+      particle.classList.add('booster-particle');
+      
+      // Position at the back of the spaceship
+      particle.style.left = `${shipX}%`;
+      
+      // Randomize vertical position slightly for natural effect
+      const randomYOffset = (Math.random() - 0.5) * 3;
+      particle.style.top = `${shipY + randomYOffset}%`;
+      
+      // Random size variation
+      const size = 1 + Math.random() * 3;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      
+      // Random color variation (green to yellow)
+      const hue = 100 + Math.random() * 40;
+      particle.style.backgroundColor = `hsl(${hue}, 100%, 70%)`;
+      
+      // Animation
+      particle.style.animationName = 'particle-move';
+      
+      // Random duration for more natural effect
+      const duration = 0.3 + Math.random() * 0.5;
+      particle.style.animationDuration = `${duration}s`;
+      particle.style.animationTimingFunction = 'linear';
+      
+      // Add to container
+      spaceContainer.appendChild(particle);
+      
+      // Remove particle after animation completes
+      setTimeout(() => {
+        particle.remove();
+      }, duration * 1000);
+    }
+    
+    // Generate booster particles continuously
+    const boosterInterval = setInterval(createBoosterParticle, 50);
+    
+    // Also shoot on click
+    document.addEventListener('click', function(event) {
+      // Only create a projectile if the spaceship is visible and not clicking on music control
+      if (spaceship.parentNode && !event.target.closest('.music-control')) {
+        createProjectile();
+      }
     });
   </script>
 
