@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ashwin Kumar Udayakumar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet" />
+    <link rel="icon" href="imgs/favicon-32x32.png" />
+    <style>
+      body {
+        font-family: 'Manrope', sans-serif;
+        background: #ffffff;
+        color: #1a202c;
+      }
+      .project-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .project-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .hero-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(180deg, #f7fafc 0%, #ffffff 100%);
+      }
+      .scroll-indicator {
+        position: absolute;
+        bottom: 3rem;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
+      }
+      .scroll-indicator:hover {
+        opacity: 1;
+      }
+      .scroll-indicator:hover svg {
+        animation-play-state: paused;
+      }
+      .content-section {
+        background: linear-gradient(180deg, #ffffff 0%, #f7fafc 100%);
+      }
+      @keyframes bounce {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(6px);
+        }
+      }
+      .scroll-indicator svg {
+        animation: bounce 2s infinite;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      @keyframes typing {
+        from { width: 0 }
+        to { width: 100% }
+      }
+      
+      @keyframes blink {
+        50% { border-color: transparent }
+      }
+      
+      .typing-animation {
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        border-right: 3px solid #1a202c;
+        width: 0;
+        font-size: 1.875rem;  /* 30px for mobile */
+        animation: 
+          typing 2s steps(30, end) forwards,
+          blink 1s step-end infinite;
+      }
+      .rotating-text {
+        position: relative;
+        height: 1.5em;
+        overflow: hidden;
+        margin: 0 auto;
+        text-align: center;
+      }
+      
+      .rotating-text span {
+        display: block;
+        position: absolute;
+        width: 100%;
+        left: 0;
+        right: 0;
+        opacity: 0;
+        animation: rotateWords 10s linear infinite 0s;
+        transform: translateY(50px);
+      }
+      
+      .rotating-text span:nth-child(2) {
+        animation-delay: 2s;
+      }
+      
+      .rotating-text span:nth-child(3) {
+        animation-delay: 4s;
+      }
+      
+      .rotating-text span:nth-child(4) {
+        animation-delay: 6s;
+      }
+      
+      .rotating-text span:nth-child(5) {
+        animation-delay: 8s;
+      }
+      
+      @keyframes rotateWords {
+        0%, 15% {
+          opacity: 0;
+          transform: translateY(25px);
+        }
+        20%, 35% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        40%, 100% {
+          opacity: 0;
+          transform: translateY(-25px);
+        }
+      }
+
+      /* Add media query for larger screens */
+      @media (min-width: 768px) {
+        .typing-animation {
+          font-size: 3rem;  /* 48px for desktop */
+        }
+      }
+
+      /* Update the h1 to remove default text size classes */
+      h1 {
+        font-bold: true;
+        margin-bottom: 1rem;
+        tracking-tight: true;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hero Section -->
+    <section class="hero-section relative">
+      <div class="text-center px-4">
+        <img
+          src="imgs/profile.jpeg"
+          alt="Ashwin Kumar Udayakumar"
+          class="rounded-full w-40 h-40 md:w-48 md:h-48 object-cover shadow-xl ring-4 ring-white mx-auto mb-8"
+        />
+        <h1 class="font-bold mb-4 tracking-tight">
+          <span class="typing-animation">
+            Ashwin Kumar Udayakumar
+          </span>
+        </h1>
+        <p class="text-xl text-gray-600 font-medium rotating-text">
+          <span>AI Engineer & ex-YC Startups</span>
+          <span>Ex-DeasyLabs (Founding Engineer)</span>
+          <span>NYU Courant Grad (MS in CS, 2022-2024)</span>
+          <span>Ex-CTO of knowledge.com</span>
+          <span>Ex-Zoho</span>
+        </p>
+        
+        <div class="flex items-center justify-center gap-6 mt-6">
+          <a href="https://github.com/ashwin2k" 
+             class="text-gray-600 hover:text-gray-900 transition-colors"
+             aria-label="GitHub Profile">
+            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+            </svg>
+          </a>
+          <a href="https://www.linkedin.com/in/ashwin-kumar14/" 
+             class="text-gray-600 hover:text-gray-900 transition-colors"
+             aria-label="LinkedIn Profile">
+            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </a>
+          <a href="mailto:ashwin102000@gmail.com" 
+             class="text-gray-600 hover:text-gray-900 transition-colors"
+             aria-label="Email">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </a>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <a href="#content" class="scroll-indicator group">
+          <div class="flex flex-col items-center gap-2">
+            <span class="text-sm text-gray-500 font-medium">Scroll to explore</span>
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Content Section -->
+    <section id="content" class="content-section py-20">
+      <div class="container mx-auto px-4 max-w-3xl">
+        <div class="space-y-16">
+          <!-- About Section -->
+          <div class="prose prose-lg">
+            <p class="text-lg text-gray-700 leading-relaxed">
+              I am a <span class="font-semibold">Master's in Computer Science</span> graduate from <span class="font-semibold">New York University</span> passionate about Startups, AI, and Agent-based Systems.
+              I was previously at multiple Y Combinator companies including DeasyLabs (YC S23) and ProSights (YC W24), and served as the 
+              <span class="font-semibold">CTO of knowledge.com</span> - an AI-powered Sales Intelligence Platform.
+            </p>
+            
+            <p class="text-lg text-gray-700 leading-relaxed">
+              I also host my personal projects (and open-source projects) on <a href="https://www.github.com/ashwin2k" class="text-blue-700 hover:text-blue-800 font-medium">GitHub</a>, 
+              and I write about ML/DL research on 
+              <a href="https://medium.com/@ashwin102000" class="text-blue-700 hover:text-blue-800 font-medium">Medium</a>.
+            </p>
+          </div>
+
+          <!-- Blog Posts Section -->
+          <div>
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+              <span class="text-gray-800">Blogs</span>
+              <div class="h-px flex-1 bg-gray-200"></div>
+            </h2>
+            <ul class="space-y-4">
+              <li>
+                <a
+                  class="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center gap-2 group"
+                  href="pages/json-exploit.html"
+                >
+                  <span class="text-sm text-blue-500">—</span>
+                  <span>The JSON Prompt Exploit that breaks ChatGPT</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  class="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center gap-2 group"
+                  href="pages/optimizing-heady.html"
+                >
+                  <span class="text-sm text-blue-500">—</span>
+                  <span>Optimizing heavy models with early exit branches</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  class="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center gap-2 group"
+                  href="pages/green-preds.html"
+                >
+                  <span class="text-sm text-blue-500">—</span>
+                  <span>Going green by recycling predictions!</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  class="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center gap-2 group"
+                  href="pages/early-exit.html"
+                >
+                  <span class="text-sm text-blue-500">—</span>
+                  <span>Early Exiting for Image Captioning Models</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  class="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center gap-2 group"
+                  href="https://ashwin2k.github.io/tmrl-rnn/"
+                >
+                  <span class="text-sm text-blue-500">—</span>
+                  <span>Autonomous Video Game Racing with Reinforcement Learning</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Projects Section -->
+          <div>
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+              <span class="text-gray-800">Selected Projects</span>
+              <div class="h-px flex-1 bg-gray-200"></div>
+            </h2>
+            <div class="grid grid-cols-1 gap-6">
+              <a href="https://github.com/Intro-To-Deep-Learning-Systems/Using-Video-summarization-techniques-for-effective-search-indexing" 
+                 class="project-card rounded-xl p-6 border border-gray-100 hover:shadow-lg transition-all bg-gradient-to-br from-white to-gray-50 flex items-center justify-between">
+                <div class="flex-1 pr-6">
+                  <h3 class="font-semibold mb-3 text-gray-800">Video Summarization for Search Indexing</h3>
+                  <p class="text-sm text-gray-600 leading-relaxed">Deep Learning Systems project for efficient video search indexing</p>
+                </div>
+                <div class="w-24 h-24 flex-shrink-0">
+                  <img src="imgs/video-summary.webp" alt="" class="w-full h-full object-cover rounded-lg shadow-sm"/>
+                </div>
+              </a>
+
+              <a href="https://github.com/ashwin2k/Spartan-Chat-Engine" 
+                 class="project-card rounded-xl p-6 border border-gray-100 hover:shadow-lg transition-all bg-gradient-to-br from-white to-gray-50 flex items-center justify-between">
+                <div class="flex-1 pr-6">
+                  <h3 class="font-semibold mb-3 text-gray-800">SpartanChat</h3>
+                  <p class="text-sm text-gray-600 leading-relaxed">A Chatbot built using LLamaindex that uses Web Context and RAG Techniques such as RAG Fusion</p>
+                </div>
+                <div class="w-24 h-24 flex-shrink-0">
+                  <img src="imgs/spartanchat.webp" alt="" class="w-full h-full object-cover rounded-lg shadow-sm"/>
+                </div>
+              </a>
+
+              <div class="grid grid-cols-1 gap-6">
+                <a href="https://ashwin2k.com/tmrl-rnn/" 
+                   class="project-card rounded-xl p-6 border border-gray-100 hover:shadow-lg transition-all bg-gradient-to-br from-white to-gray-50 flex items-center justify-between">
+                  <div class="flex-1 pr-6">
+                    <h3 class="font-semibold mb-3 text-gray-800">Trackmania Racing AI</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">An AI racing agent that learns to play Trackmania using Reinforcement Learning</p>
+                  </div>
+                  <div class="w-24 h-24 flex-shrink-0">
+                    <img src="imgs/600px-Trackmania.jpg" alt="" class="w-full h-full object-cover rounded-lg shadow-sm"/>
+                  </div>
+                </a>
+
+              <a href="https://github.com/ashwin2k/AnimeGAN" 
+                 class="project-card rounded-xl p-6 border border-gray-100 hover:shadow-lg transition-all bg-gradient-to-br from-white to-gray-50 flex items-center justify-between">
+                <div class="flex-1 pr-6">
+                  <h3 class="font-semibold mb-3 text-gray-800">AnimeGAN</h3>
+                  <p class="text-sm text-gray-600 leading-relaxed">A scratch implementation of DCGAN (with multi-GPU support) to create anime style faces</p>
+                </div>
+                <div class="w-24 h-24 flex-shrink-0">
+                  <img src="imgs/anime.png" alt="" class="w-full h-full object-cover rounded-lg shadow-sm"/>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

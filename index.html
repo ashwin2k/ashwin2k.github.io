@@ -8,1259 +8,114 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
   <link rel="icon" href="imgs/favicon-32x32.png" />
-  <style>
-    :root {
-      --color-bg: #0a0a0a;
-      --color-text: #33ff66;
-      --color-text-secondary: #86ceb6;
-      --color-accent: #33ff66;
-      --color-border: #33ff66;
-      --max-width: 1000px;
-      --color-header-bg: rgba(10, 10, 10, 0.8);
-      --color-section-bg: rgba(20, 20, 20, 0.7);
-      --vh: 1vh;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Press Start 2P', monospace;
-      background-color: var(--color-bg);
-      color: var(--color-text);
-      line-height: 1.5;
-      background-image: 
-        linear-gradient(rgba(0, 50, 0, 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 50, 0, 0.1) 1px, transparent 1px);
-      background-size: 20px 20px;
-      position: relative;
-      overflow-x: hidden;
-      width: 100%;
-    }
-
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.15),
-        rgba(0, 0, 0, 0.15) 1px,
-        transparent 1px,
-        transparent 2px
-      );
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* 8-bit rain animation */
-    .rain-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .rain-drop {
-      position: absolute;
-      width: 2px;
-      height: 10px;
-      background-color: rgba(51, 255, 102, 0.5);
-      box-shadow: 0 0 4px rgba(51, 255, 102, 0.3);
-      animation: rain-fall linear infinite;
-      image-rendering: pixelated;
-    }
-
-    .rain-drop.pixelated {
-      width: 4px;
-      height: 4px;
-      transform-origin: center;
-    }
-
-    @keyframes rain-fall {
-      0% {
-        transform: translateY(-100px);
-      }
-      100% {
-        transform: translateY(100vh);
-      }
-    }
-
-    @keyframes rain-fall-pixel {
-      0% {
-        transform: translateY(-100px) scale(1);
-      }
-      25% {
-        transform: translateY(calc(25vh - 100px)) scale(1.2);
-      }
-      50% {
-        transform: translateY(calc(50vh - 100px)) scale(1);
-      }
-      75% {
-        transform: translateY(calc(75vh - 100px)) scale(1.2);
-      }
-      100% {
-        transform: translateY(100vh) scale(1);
-      }
-    }
-
-    /* Space background animation */
-    .space-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-      background-color: var(--color-bg);
-    }
-
-    /* Moon styles */
-    .moon {
-      position: absolute;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background-color: #cccccc;
-      box-shadow: inset -15px -15px 0 rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(200, 200, 255, 0.6);
-      top: 15%;
-      right: 10%;
-      z-index: 1;
-      image-rendering: pixelated;
-      animation: moon-pulse 5s ease-in-out infinite;
-    }
-
-    @keyframes moon-pulse {
-      0%, 100% { 
-        box-shadow: inset -15px -15px 0 rgba(0, 0, 0, 0.2), 
-                   0 0 10px rgba(255, 255, 255, 0.4), 
-                   0 0 20px rgba(200, 200, 255, 0.6); 
-        transform: scale(1);
-      }
-      50% { 
-        box-shadow: inset -15px -15px 0 rgba(0, 0, 0, 0.2), 
-                   0 0 15px rgba(255, 255, 255, 0.7), 
-                   0 0 35px rgba(200, 200, 255, 0.9); 
-        transform: scale(1.02);
-      }
-    }
-
-    .moon::before {
-      content: "";
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background-color: rgba(0, 0, 0, 0.15);
-      border-radius: 50%;
-      top: 15px;
-      left: 20px;
-    }
-
-    .moon::after {
-      content: "";
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background-color: rgba(0, 0, 0, 0.1);
-      border-radius: 50%;
-      top: 35px;
-      left: 30px;
-    }
-
-    /* Planet styles */
-    .planet {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(30deg, #d1a567, #e6c89c);
-      box-shadow: inset -20px -10px 0 rgba(0, 0, 0, 0.3), 0 0 15px rgba(209, 165, 103, 0.5), 0 0 30px rgba(255, 220, 150, 0.7);
-      bottom: 20%;
-      left: 15%;
-      z-index: 1;
-      image-rendering: pixelated;
-      overflow: visible;
-      animation: planet-pulse 4s ease-in-out infinite;
-    }
-
-    @keyframes planet-pulse {
-      0%, 100% { 
-        box-shadow: inset -20px -10px 0 rgba(0, 0, 0, 0.3), 
-                   0 0 15px rgba(209, 165, 103, 0.5), 
-                   0 0 30px rgba(255, 220, 150, 0.4); 
-        transform: scale(1);
-      }
-      50% { 
-        box-shadow: inset -20px -10px 0 rgba(0, 0, 0, 0.3), 
-                   0 0 25px rgba(209, 165, 103, 0.8), 
-                   0 0 50px rgba(255, 220, 150, 1); 
-        transform: scale(1.03);
-      }
-    }
-
-    /* Planet rings */
-    .planet::before {
-      content: "";
-      position: absolute;
-      width: 140px;
-      height: 20px;
-      background: linear-gradient(90deg, 
-        rgba(209, 165, 103, 0.2), 
-        rgba(209, 165, 103, 0.8),
-        rgba(209, 165, 103, 0.2));
-      border-radius: 50%;
-      top: 50%;
-      left: -30px;
-      transform: translateY(-50%) rotate(-20deg);
-      z-index: 0;
-      box-shadow: 0 0 5px rgba(209, 165, 103, 0.5), 0 0 15px rgba(255, 220, 150, 0.4);
-    }
-
-    /* Satellite styles */
-    .satellite {
-      position: absolute;
-      width: 24px;
-      height: 8px;
-      background-color: #ddd;
-      top: 30%;
-      left: 25%;
-      z-index: 1;
-      transform: rotate(45deg);
-      image-rendering: pixelated;
-    }
-
-    .satellite::before {
-      content: "";
-      position: absolute;
-      width: 14px;
-      height: 3px;
-      background-color: #33ff66;
-      top: -8px;
-      left: 5px;
-      box-shadow: 0 0 4px rgba(51, 255, 102, 0.6);
-    }
-
-    .satellite::after {
-      content: "";
-      position: absolute;
-      width: 14px;
-      height: 3px;
-      background-color: #33ff66;
-      bottom: -8px;
-      left: 5px;
-      box-shadow: 0 0 4px rgba(51, 255, 102, 0.6);
-    }
-
-    /* Solar panel styles */
-    .satellite .solar-panel-left,
-    .satellite .solar-panel-right {
-      position: absolute;
-      width: 16px;
-      height: 12px;
-      background-color: #4169E1;
-      border: 1px solid #6495ED;
-      top: -2px;
-    }
-
-    .satellite .solar-panel-left {
-      left: -18px;
-      transform: skewY(10deg);
-    }
-
-    .satellite .solar-panel-right {
-      right: -18px;
-      transform: skewY(-10deg);
-    }
-
-    /* Solar panel grid lines */
-    .satellite .solar-panel-left::before,
-    .satellite .solar-panel-right::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: linear-gradient(90deg, transparent 30%, rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0.2) 33%, transparent 33%),
-                        linear-gradient(0deg, transparent 30%, rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0.2) 33%, transparent 33%);
-      background-size: 6px 6px;
-      opacity: 0.8;
-    }
-
-    /* Solar panel shine effect */
-    .satellite .solar-panel-left::after,
-    .satellite .solar-panel-right::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, 0.5) 80%, rgba(255, 255, 255, 0) 90%);
-      animation: panel-shine 4s linear infinite;
-    }
-
-    @keyframes panel-shine {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 0.7; }
-    }
-
-    /* UFO styles */
-    .ufo {
-      position: absolute;
-      width: 48px;
-      height: 14px;
-      background-color: #aaaaaa;
-      border-radius: 50%;
-      z-index: 10;
-      image-rendering: pixelated;
-      overflow: visible;
-      box-shadow: 0 0 8px rgba(51, 255, 102, 0.4), 0 0 20px rgba(255, 255, 255, 0.2);
-      border: 2px solid #888888;
-      opacity: 1;
-      display: none; /* Temporarily hidden */
-    }
-
-    .ufo .dome {
-      position: absolute;
-      width: 20px;
-      height: 10px;
-      background-color: #cccccc;
-      border-radius: 50% 50% 0 0;
-      top: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      border: 1px solid #888888;
-      border-bottom: 0;
-      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    /* UFO window lights */
-    .ufo .window {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background-color: #ffff00;
-      border-radius: 50%;
-      top: 50%;
-      transform: translateY(-50%);
-      box-shadow: 0 0 4px rgba(255, 255, 0, 0.8);
-      animation: window-blink 3s infinite;
-      z-index: 11; /* Ensure window lights appear above UFO body */
-    }
-
-    .ufo .window:nth-child(2) {
-      left: 7px;
-      animation-delay: 0.5s;
-    }
-
-    .ufo .window:nth-child(3) {
-      left: 18px;
-      animation-delay: 1s;
-    }
-
-    .ufo .window:nth-child(4) {
-      right: 18px;
-      animation-delay: 1.5s;
-    }
-
-    .ufo .window:nth-child(5) {
-      right: 7px;
-      animation-delay: 2s;
-    }
-
-    @keyframes window-blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    .ufo::before {
-      content: "";
-      position: absolute;
-      width: 24px;
-      height: 8px;
-      background-color: #66ccff;
-      border-radius: 50%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 10px rgba(102, 204, 255, 0.8);
-      border: 1px solid #5599dd;
-    }
-
-    .ufo::after {
-      content: "";
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background-color: #66ccff;
-      border-radius: 0;
-      bottom: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      box-shadow: 0 0 6px rgba(102, 204, 255, 0.8), 0 0 15px rgba(102, 204, 255, 0.4);
-      animation: ufo-beam 2s infinite;
-      clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
-      z-index: 9; /* Ensure beam is below UFO but above other elements */
-      opacity: 0.9; /* Slightly increased opacity */
-    }
-
-    @keyframes ufo-beam {
-      0%, 100% { 
-        height: 8px;
-        opacity: 0.8;
-        box-shadow: 0 0 6px rgba(102, 204, 255, 0.8);
-      }
-      50% { 
-        height: 24px;
-        opacity: 1;
-        box-shadow: 0 0 10px rgba(102, 204, 255, 1);
-      }
-    }
-
-    .asteroid {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background-color: #aaa;
-      box-shadow: 0 0 2px rgba(200, 200, 200, 0.8);
-      image-rendering: pixelated;
-      transform-origin: center;
-    }
-
-    .asteroid.small {
-      width: 2px;
-      height: 2px;
-    }
-
-    .asteroid.medium {
-      width: 4px;
-      height: 4px;
-    }
-
-    .asteroid.large {
-      width: 6px;
-      height: 6px;
-    }
-
-    @keyframes float-diagonal {
-      0% {
-        transform: translate(-100px, -100px) rotate(0deg);
-      }
-      100% {
-        transform: translate(calc(100vw + 100px), calc(100vh + 100px)) rotate(360deg);
-      }
-    }
-
-    /* Star styles */
-    .star {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background-color: #fff;
-      opacity: 0.6;
-      border-radius: 50%;
-    }
-
-    .star.bright {
-      width: 3px;
-      height: 3px;
-      opacity: 0.9;
-      box-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
-    }
-
-    .star.twinkle {
-      animation: twinkle 4s ease-in-out infinite;
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 1; }
-    }
-
-    /* Projectile styles */
-    .projectile {
-      position: absolute;
-      width: 8px;
-      height: 2px;
-      background-color: #33ff66;
-      box-shadow: 0 0 6px rgba(51, 255, 102, 0.8);
-      z-index: 1;
-      transform-origin: center;
-    }
-
-    @keyframes projectile-move {
-      0% {
-        transform: translateX(0) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(100vw) scale(1.2);
-        opacity: 0;
-      }
-    }
-
-    /* Spaceship styles */
-    .spaceship {
-      position: absolute;
-      width: 40px;
-      height: 24px;
-      background-color: transparent;
-      background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 24" width="40" height="24"><rect x="8" y="10" width="24" height="4" fill="%2333ff66"/><rect x="6" y="8" width="2" height="8" fill="%2333ff66"/><rect x="32" y="8" width="2" height="8" fill="%2333ff66"/><rect x="4" y="6" width="2" height="12" fill="%2333ff66"/><rect x="34" y="6" width="2" height="12" fill="%2333ff66"/><rect x="16" y="6" width="8" height="2" fill="%2333ff66"/><rect x="16" y="16" width="8" height="2" fill="%2333ff66"/><rect x="36" y="10" width="4" height="4" fill="%2333ff66"/></svg>');
-      z-index: 1;
-      image-rendering: pixelated;
-      pointer-events: none;
-      animation: spaceship-move 60s linear infinite;
-      opacity: 0.8;
-    }
-
-    /* Spaceship booster */
-    .spaceship::after {
-      content: "";
-      position: absolute;
-      width: 10px;
-      height: 4px;
-      background-color: #33ff66;
-      top: 10px;
-      left: -10px;
-      animation: booster-flicker 0.2s steps(2) infinite;
-      box-shadow: 0 0 8px 2px rgba(51, 255, 102, 0.6);
-    }
-
-    /* Booster particles */
-    .booster-particle {
-      position: absolute;
-      width: 3px;
-      height: 3px;
-      background-color: #33ff66;
-      border-radius: 50%;
-      opacity: 0.8;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    @keyframes particle-move {
-      0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 0.8;
-      }
-      100% {
-        transform: translate(-20px, 0) scale(0.2);
-        opacity: 0;
-      }
-    }
-
-    /* Booster flame flicker animation */
-    @keyframes booster-flicker {
-      0% { 
-        width: 6px;
-        opacity: 0.8;
-      }
-      50% {
-        width: 10px;
-        opacity: 1;
-      }
-      100% {
-        width: 8px;
-        opacity: 0.9;
-      }
-    }
-
-    @keyframes spaceship-move {
-      0% {
-        left: -100px;
-        top: 30%;
-        transform: rotate(0deg);
-      }
-      20% {
-        left: 30%;
-        top: 20%;
-        transform: rotate(5deg);
-      }
-      40% {
-        left: 60%;
-        top: 50%;
-        transform: rotate(-5deg);
-      }
-      60% {
-        left: 40%;
-        top: 70%;
-        transform: rotate(3deg);
-      }
-      80% {
-        left: 20%;
-        top: 40%;
-        transform: rotate(-3deg);
-      }
-      100% {
-        left: 120%;
-        top: 30%;
-        transform: rotate(0deg);
-      }
-    }
-
-    .container {
-      width: 100%;
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 0 16px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero-section {
-      min-height: 100vh; /* Fallback */
-      min-height: calc(var(--vh, 1vh) * 100);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 60px 16px 100px;
-      position: relative;
-      width: 100%;
-    }
-
-    .content-section {
-      padding: 40px 0;
-    }
-
-    h1 {
-      font-size: 28px;
-      font-weight: normal;
-      letter-spacing: -0.015em;
-      margin-bottom: 24px;
-      text-shadow: 4px 4px 0px rgba(0, 255, 0, 0.2);
-      color: #33ff66;
-    }
-
-    h2 {
-      font-size: 20px;
-      font-weight: normal;
-      letter-spacing: -0.015em;
-      margin-bottom: 24px;
-      position: relative;
-      display: inline-block;
-      text-shadow: 3px 3px 0px rgba(0, 255, 0, 0.2);
-    }
-
-    .section-title::before {
-      content: "★";
-      margin-right: 10px;
-      color: #33ff66;
-    }
-
-    p {
-      font-size: 14px;
-      color: var(--color-text-secondary);
-      max-width: 600px;
-      margin: 0 auto 24px;
-      line-height: 1.8;
-    }
-
-    .tagline {
-      font-size: 11px;
-      margin-bottom: 24px;
-      padding: 0 10px;
-    }
-
-    .about-text {
-      text-align: left;
-      margin-left: 0;
-      width: 100%;
-      max-width: 100%;
-    }
-
-    .profile-image {
-      width: 100px;
-      height: 100px;
-      border-radius: 0;
-      object-fit: cover;
-      margin-bottom: 30px;
-      transition: transform 0.3s ease;
-      image-rendering: pixelated;
-      border: 4px solid var(--color-accent);
-      box-shadow: 6px 6px 0 rgba(0, 255, 0, 0.2);
-    }
-
-    .profile-image:hover {
-      transform: scale(1.05);
-    }
-
-    .social-links {
-      display: flex;
-      justify-content: center;
-      gap: 24px;
-      margin-top: 30px;
-    }
-
-    .social-link {
-      color: var(--color-text-secondary);
-      transition: color 0.2s ease;
-    }
-
-    .social-link:hover {
-      color: var(--color-accent);
-      transform: scale(1.1);
-    }
-
-    .scroll-indicator {
-      position: absolute;
-      bottom: 50px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: var(--color-text-secondary);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      font-size: 12px;
-      opacity: 0.8;
-      transition: opacity 0.3s ease;
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 10px 20px;
-      border: 2px solid var(--color-accent);
-      z-index: 10;
-    }
-
-    .scroll-indicator:hover {
-      opacity: 1;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(6px); }
-    }
-
-    .scroll-indicator svg {
-      animation: bounce 2s infinite;
-    }
-
-    .section {
-      margin-bottom: 40px;
-      background-color: var(--color-section-bg);
-      padding: 20px;
-      border: 2px solid var(--color-accent);
-      position: relative;
-      box-shadow: 6px 6px 0 rgba(0, 255, 0, 0.2);
-      width: 100%;
-    }
-
-    .section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 10px;
-      background: repeating-linear-gradient(
-        90deg,
-        var(--color-accent),
-        var(--color-accent) 10px,
-        transparent 10px,
-        transparent 20px
-      );
-    }
-
-    .section-title {
-      font-size: 20px;
-      font-weight: normal;
-      margin-bottom: 30px;
-      position: relative;
-      display: inline-block;
-    }
-
-    .skill-list {
-      list-style: none;
-      margin-bottom: 40px;
-    }
-
-    .skill-item {
-      padding: 12px 0;
-      border-bottom: 1px solid var(--color-border);
-      font-size: 11px;
-      display: flex;
-      align-items: center;
-      line-height: 1.6;
-    }
-
-    .skill-item::before {
-      content: '>';
-      margin-right: 10px;
-      color: #33ff66;
-    }
-
-    .skill-item:last-child {
-      border-bottom: none;
-    }
-
-    .blog-list, .project-list {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    .blog-item, .project-item {
-      padding: 16px;
-      background-color: rgba(0, 50, 0, 0.3);
-      transition: transform 0.3s ease;
-      text-decoration: none;
-      color: var(--color-text);
-      border: 2px solid var(--color-accent);
-      position: relative;
-      box-shadow: 4px 4px 0 rgba(0, 255, 0, 0.2);
-    }
-
-    .blog-item:hover, .project-item:hover {
-      transform: translateY(-4px);
-      box-shadow: 6px 6px 0 rgba(0, 255, 0, 0.3);
-      background-color: rgba(0, 70, 0, 0.3);
-    }
-
-    .project-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .project-image {
-      width: 70px;
-      height: 70px;
-      border-radius: 0;
-      object-fit: cover;
-      image-rendering: pixelated;
-      border: 2px solid var(--color-accent);
-    }
-
-    .project-content h3, .blog-item h3 {
-      font-size: 12px;
-      font-weight: normal;
-      margin-bottom: 8px;
-    }
-
-    .project-content p, .blog-item p {
-      font-size: 10px;
-      color: var(--color-text-secondary);
-      margin: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 20px;
-        margin-bottom: 16px;
-      }
-      
-      .tagline {
-        font-size: 10px;
-        line-height: 1.8;
-        padding: 0 10px;
-      }
-      
-      .profile-image {
-        width: 80px;
-        height: 80px;
-      }
-      
-      .section {
-        padding: 16px;
-        margin-bottom: 30px;
-      }
-      
-      .section-title {
-        font-size: 16px;
-        margin-bottom: 20px;
-      }
-      
-      .project-content h3, .blog-item h3 {
-        font-size: 11px;
-      }
-      
-      .music-control {
-        padding: 8px 12px;
-        font-size: 10px;
-      }
-      
-      .hero-center-text {
-        font-size: 14px;
-        padding: 10px 20px;
-        bottom: 30px;
-        max-width: 90%;
-      }
-      
-      .project-item {
-        flex-direction: row;
-        align-items: center;
-        padding: 14px;
-      }
-      
-      .project-image {
-        width: 50px;
-        height: 50px;
-        min-width: 50px;
-      }
-      
-      .project-content {
-        width: calc(100% - 66px);
-      }
-      
-      .project-content p {
-        font-size: 9px;
-        line-height: 1.5;
-      }
-      
-      .social-links {
-        gap: 20px;
-      }
-      
-      .social-link svg {
-        width: 20px;
-        height: 20px;
-      }
-      
-      .blog-item {
-        padding: 14px;
-      }
-      
-      .scroll-indicator {
-        bottom: 30px;
-        padding: 8px 14px;
-      }
-    }
-
-    @media (min-width: 481px) and (max-width: 767px) {
-      h1 {
-        font-size: 24px;
-      }
-      
-      .section {
-        padding: 20px;
-      }
-      
-      .project-content {
-        flex: 1;
-      }
-    }
-
-    @media (min-width: 768px) {
-      .blog-list, .project-list {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 24px;
-      }
-
-      .container {
-        padding: 0 48px;
-      }
-
-      h1 {
-        font-size: 36px;
-      }
-
-      .profile-image {
-        width: 160px;
-        height: 160px;
-      }
-      
-      .project-image {
-        width: 80px;
-        height: 80px;
-      }
-    }
-
-    .blog-item {
-      position: relative;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    
-    .blog-item h3 {
-      font-size: 14px;
-      font-weight: normal;
-      margin-bottom: 16px;
-      letter-spacing: 0;
-      transition: color 0.3s ease;
-    }
-    
-    .blog-item:hover h3 {
-      color: #ffffff;
-    }
-    
-    .blog-item::before {
-      content: '>';
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      color: var(--color-accent);
-    }
-
-    .project-item {
-      position: relative;
-      padding: 24px;
-      align-items: flex-start;
-    }
-    
-    .project-image {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      box-shadow: 3px 3px 0 rgba(0, 255, 0, 0.3);
-      transition: transform 0.3s ease;
-    }
-    
-    .project-item:hover .project-image {
-      transform: scale(1.05);
-      box-shadow: 4px 4px 0 rgba(0, 255, 0, 0.4);
-    }
-    
-    .project-content {
-      flex: 1;
-    }
-    
-    .project-content h3 {
-      font-size: 14px;
-      font-weight: normal;
-      margin-bottom: 12px;
-      letter-spacing: 0;
-      transition: color 0.3s ease;
-    }
-    
-    .project-item:hover .project-content h3 {
-      color: #ffffff;
-    }
-    
-    .project-content p {
-      font-size: 12px;
-      line-height: 1.5;
-      color: var(--color-text-secondary);
-    }
-
-    .site-header {
-      text-align: center;
-      padding: 20px 0;
-      margin-bottom: 30px;
-      position: relative;
-    }
-
-    .site-title {
-      font-size: 32px;
-      color: #33ff66;
-      text-shadow: 4px 4px 0px rgba(0, 255, 0, 0.3);
-      letter-spacing: 2px;
-      margin-bottom: 10px;
-      display: inline-block;
-      position: relative;
-    }
-
-    a {
-      color: #33ff66;
-      text-decoration: none;
-      position: relative;
-    }
-
-    a:hover {
-      color: #ffffff;
-    }
-
-    a::after {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 1px;
-      bottom: -2px;
-      left: 0;
-      background-color: #33ff66;
-      visibility: hidden;
-      transform: scaleX(0);
-      transition: all 0.3s ease-in-out;
-    }
-
-    a:hover::after {
-      visibility: visible;
-      transform: scaleX(1);
-    }
-
-    /* Cursor blinking animation */
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-
-    .cursor {
-      display: inline-block;
-      width: 10px;
-      height: 20px;
-      background-color: #33ff66;
-      animation: blink 1s step-end infinite;
-      margin-left: 5px;
-    }
-
-    /* Music control button */
-    .music-control {
-      position: fixed;
-      bottom: 16px;
-      left: 16px;
-      background-color: var(--color-section-bg);
-      border: 2px solid var(--color-accent);
-      padding: 8px 12px;
-      font-size: 11px;
-      color: var(--color-text);
-      cursor: pointer;
-      z-index: 100;
-      transition: all 0.3s ease;
-    }
-    
-    .music-control:hover {
-      background-color: rgba(0, 70, 0, 0.5);
-    }
-    
-    .music-control::before {
-      content: '♪';
-      margin-right: 8px;
-      color: #33ff66;
-    }
-
-    /* Music notification for autoplay blocked */
-    .music-notification {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: var(--color-section-bg);
-      border: 2px solid var(--color-accent);
-      padding: 10px 20px;
-      font-size: 12px;
-      color: var(--color-text);
-      z-index: 100;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.5s ease, visibility 0.5s;
-      text-align: center;
-      max-width: 300px;
-    }
-    
-    .music-notification.show {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    /* Noise overlay */
-    .noise {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXWBgYGHh4d5eXlzc3OLi4ubm5uVlZWPj4+NjY19fX2JiYl/f39ra2uRkZGZmZlpaWmXl5dvb29xcXGTk5NnZ2c8TV1mAAAAG3RSTlNAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEAvEOwtAAAFVklEQVR4XpWWB67c2BUFb3g557T/hRo9/WUMZHlgr4Bg8Z4qQgQJlHI4A8SzFVrapvmTF9O7dmYRFZ60YiBhJRCgh1FYhiLAmdvX0CzTOpNE77ME0Zty/nWWzchDtiqPLR Elbla2JXPFYxdm7nL6x/xrDlcw7wQ6hcwLJQr0geQfqZMFB/yLm2rnqXa7l jLLw tWjZkwm2MffIhFHQ/YcKMHPFw==');
-      opacity: 0.03;
-      z-index: 9999;
-      pointer-events: none;
-    }
-
-    /* Style for central press start text */
-    .hero-center-text {
-      position: absolute;
-      bottom: 60px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 16px;
-      color: var(--color-accent);
-      text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 15px 30px;
-      border: 2px solid var(--color-accent);
-      z-index: 100;
-      text-align: center;
-      animation: pulse 2s infinite;
-      width: auto;
-      white-space: nowrap;
-      cursor: pointer;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-
-    @media (max-width: 480px) {
-      .site-title {
-        font-size: 22px;
-        letter-spacing: 1px;
-      }
-    }
-
-    /* Optimize touch targets for mobile */
-    @media (max-width: 767px) {
-      .social-link {
-        padding: 8px;
-        margin: -8px;
-      }
-      
-      .music-control {
-        padding: 10px 16px;
-        -webkit-tap-highlight-color: transparent;
-      }
-      
-      .hero-center-text {
-        padding: 15px 20px;
-        -webkit-tap-highlight-color: transparent;
-      }
-      
-      a, button {
-        -webkit-tap-highlight-color: transparent;
-      }
-      
-      .blog-item, .project-item {
-        -webkit-tap-highlight-color: rgba(51, 255, 102, 0.2);
-      }
-    }
-    
-    /* Fix for iOS Safari 100vh issue */
-    @supports (-webkit-touch-callout: none) {
-      .hero-section {
-        height: -webkit-fill-available;
-      }
-    }
-  </style>
   <meta name="theme-color" content="#0a0a0a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .section-title {
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+    
+    .persistent-music-notification {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: var(--color-text);
+      padding: 10px;
+      border: 1px solid var(--color-text);
+      box-shadow: 0 0 10px rgba(51, 255, 102, 0.5);
+      z-index: 100;
+      font-size: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .persistent-music-notification.show {
+      opacity: 1;
+      pointer-events: auto;
+      animation: pulse 2s infinite;
+    }
+    
+    /* 8-bit Nebulae styles */
+    .nebula {
+      position: absolute;
+      background: transparent;
+      border-radius: 50%;
+      filter: blur(20px);
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+      transform: scale(1);
+      background-image: radial-gradient(circle, transparent 30%, currentColor);
+      image-rendering: pixelated;
+    }
+    
+    .nebula::before {
+      content: '';
+      position: absolute;
+      top: 10%;
+      left: 10%;
+      width: 80%;
+      height: 80%;
+      background-color: currentColor;
+      filter: blur(25px);
+      opacity: 0.3;
+      border-radius: 40%;
+    }
+    
+    .nebula.small {
+      width: 120px;
+      height: 120px;
+    }
+    
+    .nebula.medium {
+      width: 200px;
+      height: 200px;
+    }
+    
+    .nebula.large {
+      width: 300px;
+      height: 300px;
+    }
+  </style>
 </head>
 
 <body>
   <!-- Noise overlay -->
   <div class="noise"></div>
+  
+  <!-- Scan lines effect -->
+  <div class="scan-lines"></div>
 
   <!-- Background Music -->
   <audio id="bgm" loop autoplay preload="auto">
-    <source src="audio/bgm.mp3" type="audio/mpeg">
+    <source src="audio/3.mp3" type="audio/mpeg">
     Your browser does not support the audio element.
   </audio>
-
-  <!-- Music control button -->
-  <div class="music-control" id="music-control">MUSIC: ON</div>
+  
+  <!-- Music player UI -->
+  <div class="music-player" id="music-player">
+    <div class="track-info">TRACK: <span id="track-name">3.mp3</span></div>
+    <div class="player-controls">
+      <button id="prev-track">◄</button>
+      <button id="play-pause">▶</button>
+      <button id="next-track">►</button>
+    </div>
+  </div>
   
   <!-- Music notification for autoplay blocked -->
   <div class="music-notification" id="music-notification">
     CLICK ANYWHERE TO ENABLE MUSIC
   </div>
+  
+  <!-- Persistent music notification -->
+  <!-- Removed bottom right notification -->
 
   <!-- Hero Section -->
   <section class="hero-section relative flex flex-col items-center justify-center">
@@ -1298,6 +153,13 @@
     <div class="container">
       <!-- About Section -->
       <div class="section">
+        <div class="section-corner top-left"></div>
+        <div class="section-corner top-right"></div>
+        <div class="section-corner bottom-left"></div>
+        <div class="section-corner bottom-right"></div>
+        <div class="section-indicator"></div>
+        <div class="section-scan"></div>
+        <div class="corner-decoration"></div>
         <h2 class="section-title">ABOUT</h2>
         <p class="about-text">
           I started freelancing @ 16yo, currently focusing on Fullstack Development and Agentic AI. Worked with
@@ -1319,21 +181,33 @@
 
       <!-- Blog Posts Section -->
       <div class="section">
+        <div class="section-corner top-left"></div>
+        <div class="section-corner top-right"></div>
+        <div class="section-corner bottom-left"></div>
+        <div class="section-corner bottom-right"></div>
+        <div class="section-indicator"></div>
+        <div class="section-scan"></div>
+        <div class="corner-decoration"></div>
         <h2 class="section-title">BLOGS</h2>
         <div class="blog-list">
           <a class="blog-item" href="pages/json-exploit.html">
+            <div class="blog-item-indicator"></div>
             <h3>The JSON Prompt Exploit that breaks ChatGPT</h3>
           </a>
           <a class="blog-item" href="pages/optimizing-heady.html">
+            <div class="blog-item-indicator"></div>
             <h3>Optimizing heavy models with early exit branches</h3>
           </a>
           <a class="blog-item" href="pages/green-preds.html">
+            <div class="blog-item-indicator"></div>
             <h3>Going green by recycling predictions!</h3>
           </a>
           <a class="blog-item" href="pages/early-exit.html">
+            <div class="blog-item-indicator"></div>
             <h3>Early Exiting for Image Captioning Models</h3>
           </a>
           <a class="blog-item" href="https://ashwin2k.github.io/tmrl-rnn/">
+            <div class="blog-item-indicator"></div>
             <h3>Autonomous Video Game Racing with Reinforcement Learning</h3>
           </a>
         </div>
@@ -1341,10 +215,18 @@
 
       <!-- Projects Section -->
       <div class="section">
+        <div class="section-corner top-left"></div>
+        <div class="section-corner top-right"></div>
+        <div class="section-corner bottom-left"></div>
+        <div class="section-corner bottom-right"></div>
+        <div class="section-indicator"></div>
+        <div class="section-scan"></div>
+        <div class="corner-decoration"></div>
         <h2 class="section-title">PROJECTS</h2>
         <div class="project-list">
           <a href="https://github.com/Intro-To-Deep-Learning-Systems/Using-Video-summarization-techniques-for-effective-search-indexing"
             class="project-item">
+            <div class="project-glow"></div>
             <img src="imgs/video-summary.webp" alt="" class="project-image" />
             <div class="project-content">
               <h3>Video Summarization for Search Indexing</h3>
@@ -1353,6 +235,7 @@
           </a>
 
           <a href="https://github.com/ashwin2k/Spartan-Chat-Engine" class="project-item">
+            <div class="project-glow"></div>
             <img src="imgs/spartanchat.webp" alt="" class="project-image" />
             <div class="project-content">
               <h3>SpartanChat</h3>
@@ -1361,6 +244,7 @@
           </a>
 
           <a href="https://ashwin2k.com/tmrl-rnn/" class="project-item">
+            <div class="project-glow"></div>
             <img src="imgs/600px-Trackmania.jpg" alt="" class="project-image" />
             <div class="project-content">
               <h3>Trackmania Racing AI</h3>
@@ -1369,6 +253,7 @@
           </a>
 
           <a href="https://github.com/ashwin2k/AnimeGAN" class="project-item">
+            <div class="project-glow"></div>
             <img src="imgs/anime.png" alt="" class="project-image" />
             <div class="project-content">
               <h3>AnimeGAN</h3>
@@ -1387,7 +272,6 @@
     <!-- Planet element -->
     <div class="planet"></div>
     <!-- Satellite will be added via JavaScript -->
-    <!-- UFO will be added via JavaScript -->
     <!-- Spaceship will be added via JavaScript -->
   </div>
 
@@ -1396,11 +280,139 @@
     const spaceContainer = document.getElementById('space-container');
     const numberOfAsteroids = 150; // Increased from 80
     const numberOfStars = 200;
+    const numberOfNebulae = 8; // Number of nebulae to create
+    
+    // Create 8-bit nebulae
+    for (let i = 0; i < numberOfNebulae; i++) {
+      createNebula();
+    }
+    
+    function createNebula() {
+      const nebula = document.createElement('div');
+      nebula.classList.add('nebula');
+      
+      // Random size class
+      const sizeRandom = Math.random();
+      if (sizeRandom < 0.3) {
+        nebula.classList.add('small');
+      } else if (sizeRandom < 0.7) {
+        nebula.classList.add('medium');
+      } else {
+        nebula.classList.add('large');
+      }
+      
+      // Random position
+      const posX = Math.random() * 100;
+      const posY = Math.random() * 100;
+      nebula.style.left = `${posX}%`;
+      nebula.style.top = `${posY}%`;
+      
+      // Random color based on sci-fi palette
+      const colorPalette = [
+        'rgba(51, 255, 102, 0.3)',    // Green
+        'rgba(0, 191, 255, 0.3)',     // Cyan
+        'rgba(138, 43, 226, 0.3)',    // Purple
+        'rgba(255, 105, 180, 0.3)',   // Pink
+        'rgba(255, 165, 0, 0.3)',     // Orange
+        'rgba(220, 20, 60, 0.3)'      // Crimson
+      ];
+      
+      const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+      nebula.style.color = color;
+      
+      // Random rotation
+      const rotation = Math.random() * 360;
+      nebula.style.transform = `rotate(${rotation}deg)`;
+      
+      // Add very slow pulsating animation
+      const animationDuration = 20 + Math.random() * 40;
+      nebula.style.animation = `nebula-pulse ${animationDuration}s ease-in-out infinite alternate`;
+      
+      // Add to container (before other elements to ensure it's in the background)
+      spaceContainer.prepend(nebula);
+      
+      // Add keyframes for the nebula pulsating
+      if (!document.querySelector('#nebula-keyframes')) {
+        const style = document.createElement('style');
+        style.id = 'nebula-keyframes';
+        style.textContent = `
+          @keyframes nebula-pulse {
+            0% {
+              transform: rotate(${rotation}deg) scale(1);
+              opacity: 0.15;
+            }
+            50% {
+              transform: rotate(${rotation + 5}deg) scale(1.1);
+              opacity: 0.2;
+            }
+            100% {
+              transform: rotate(${rotation}deg) scale(1);
+              opacity: 0.15;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
     
     // Add spaceship
     const spaceship = document.createElement('div');
     spaceship.classList.add('spaceship');
     spaceContainer.appendChild(spaceship);
+    
+    // Function to create comets
+    function createComet() {
+      const comet = document.createElement('img');
+      comet.src = "imgs/comet.png";
+      comet.classList.add('comet');
+      
+      // Randomly choose either top or right edge
+      const edgeChoice = Math.random() > 0.5 ? 'top' : 'right';
+      
+      let startX, startY;
+      
+      if (edgeChoice === 'top') {
+        // Random position along the top edge
+        startX = Math.random() * 100;
+        startY = 0;
+      } else {
+        // Random position along the right edge
+        startX = 100;
+        startY = Math.random() * 100;
+      }
+      
+      comet.style.left = `${startX}%`;
+      comet.style.top = `${startY}%`;
+      
+      // Random animation duration (faster = more dramatic)
+      const duration = 1.5 + Math.random() * 1.5; // 1.5-3 seconds
+      comet.style.animation = `comet-move ${duration}s linear forwards`;
+      
+      // Add to container
+      spaceContainer.appendChild(comet);
+      
+      // Remove comet after animation completes
+      setTimeout(() => {
+        comet.remove();
+      }, duration * 1000);
+    }
+    
+    // Create comets at random intervals
+    function scheduleNextComet() {
+      // Random interval between 2-8 seconds
+      const nextCometDelay = 2000 + Math.random() * 6000;
+      
+      setTimeout(() => {
+        createComet();
+        scheduleNextComet();
+      }, nextCometDelay);
+    }
+    
+    // Start the comet scheduling
+    scheduleNextComet();
+    
+    // Create one initial comet
+    setTimeout(createComet, 1000);
     
     // Add satellite
     const satellite = document.createElement('div');
@@ -1418,8 +430,8 @@
     
     // Set initial satellite position
     let satellitePosition = {
-      x: 25 + Math.random() * 20, // Random start position
-      y: 30 + Math.random() * 10
+      x: Math.random() * 100, // Spawn anywhere horizontally
+      y: Math.random() * 100  // Spawn anywhere vertically
     };
     
     // Update satellite position and animation
@@ -1436,8 +448,8 @@
         y: 10 + Math.random() * 3  // Orbit radius Y
       };
       let orbitCenter = {
-        x: 40, // Center of orbit X position
-        y: 40  // Center of orbit Y position
+        x: satellitePosition.x, // Use initial spawn position as orbit center
+        y: satellitePosition.y  // Use initial spawn position as orbit center
       };
       let rotationAngle = 0;
       let rotationSpeed = 0.2; // Continuous rotation speed
@@ -1466,123 +478,7 @@
     }
     
     // Start satellite animation
-    animateSatellite();
-    
-    // Add UFO
-    const ufo = document.createElement('div');
-    ufo.classList.add('ufo');
-    
-    // Add dome to UFO
-    const dome = document.createElement('div');
-    dome.classList.add('dome');
-    ufo.appendChild(dome);
-    
-    // Add window lights to UFO
-    for (let i = 0; i < 4; i++) {
-      const window = document.createElement('div');
-      window.classList.add('window');
-      ufo.appendChild(window);
-    }
-    
-    spaceContainer.appendChild(ufo);
-    
-    // Set initial UFO position
-    let ufoPosition = {
-      x: 100, // Start visibly on-screen
-      y: 30
-    };
-    
-    // Ensure UFO is visible immediately
-    ufo.style.left = `${ufoPosition.x}px`;
-    ufo.style.top = `${ufoPosition.y}%`;
-    
-    // Update UFO position and animation
-    function animateUFO() {
-      // Movement parameters
-      let baseSpeedX = 1.2; // Forward speed
-      let speedX = baseSpeedX;
-      let time = 0;
-      
-      // Random path generation
-      let currentTargetY = ufoPosition.y;
-      let nextTargetY = 10 + Math.random() * 60;
-      let pathChangeTime = 0;
-      let pathChangeDuration = 5 + Math.random() * 7; // 5-12 seconds between path changes
-      
-      function moveUFO() {
-        time += 0.05;
-        pathChangeTime += 0.05;
-        
-        // Horizontal movement
-        ufoPosition.x += speedX;
-        
-        // Random vertical path logic
-        // Check if it's time to set a new vertical target
-        if (pathChangeTime >= pathChangeDuration) {
-          // Set new random target
-          nextTargetY = 10 + Math.random() * 60;
-          // Reset timer
-          pathChangeTime = 0;
-          // New random duration
-          pathChangeDuration = 5 + Math.random() * 7;
-        }
-        
-        // Smooth transition to next target Y position
-        const transitionSpeed = 0.008;
-        if (Math.abs(ufoPosition.y - nextTargetY) > 0.5) {
-          // Gradually move toward target with some noise
-          if (ufoPosition.y < nextTargetY) {
-            ufoPosition.y += transitionSpeed * (nextTargetY - ufoPosition.y) + (Math.random() * 0.1 - 0.05);
-          } else {
-            ufoPosition.y -= transitionSpeed * (ufoPosition.y - nextTargetY) + (Math.random() * 0.1 - 0.05);
-          }
-        }
-        
-        // Add small random jitters for more natural movement
-        ufoPosition.y += (Math.random() * 0.2 - 0.1);
-        
-        // Keep within absolute boundaries
-        if (ufoPosition.y < 5) ufoPosition.y = 5;
-        if (ufoPosition.y > 80) ufoPosition.y = 80;
-        
-        // Reset when it goes off-screen to the right
-        if (ufoPosition.x > window.innerWidth + 50) {
-          // Reset position to enter from left with completely random vertical position
-          ufoPosition.x = -50;
-          // Fully random vertical position anywhere in the visible area
-          ufoPosition.y = 5 + Math.random() * 75; // Random position between 5% and 80% of screen height
-          // Set next target to be different from entry position
-          do {
-            nextTargetY = 5 + Math.random() * 75;
-          } while (Math.abs(nextTargetY - ufoPosition.y) < 20); // Ensure sufficient distance to next target
-          
-          // Reset path change timer and randomize next change time
-          pathChangeTime = 0;
-          pathChangeDuration = 2 + Math.random() * 8; // 2-10 seconds until first path change after entry
-        }
-        
-        // Apply minimal forward-moving tilt plus some random wobble
-        const tilt = -3 + (Math.random() * 2 - 1); 
-        
-        // Update position with rotation
-        ufo.style.left = `${ufoPosition.x}px`;
-        ufo.style.top = `${ufoPosition.y}%`;
-        ufo.style.transform = `rotate(${tilt}deg)`;
-        
-        // Continue animation
-        requestAnimationFrame(moveUFO);
-      }
-      
-      // Start animation
-      moveUFO();
-    }
-    
-    // Start UFO animation
-    animateUFO();
-    
-    // Debug message for UFO visibility
-    console.log("UFO created at position:", ufoPosition.x, ufoPosition.y);
-    
+    animateSatellite();    
     // Track current spaceship position (for shooting)
     let spaceshipPosition = { x: 0, y: 0 };
     
@@ -1601,22 +497,54 @@
       star.style.left = `${posX}%`;
       star.style.top = `${posY}%`;
       
-      // Some stars are brighter
-      if (Math.random() < 0.3) {
-        star.classList.add('bright');
-      }
+      // Determine star type
+      const starTypeRandom = Math.random();
       
-      // Some stars twinkle
-      if (Math.random() < 0.4) {
+      if (starTypeRandom < 0.1) {
+        // Colored stars (10% chance)
+        star.classList.add('colored');
+        const hues = ['60', '190', '290', '330', '35']; // Yellow, Blue, Purple, Pink, Orange
+        const hue = hues[Math.floor(Math.random() * hues.length)];
+        star.style.backgroundColor = `hsl(${hue}, 100%, 85%)`;
+        star.style.boxShadow = `0 0 4px hsl(${hue}, 100%, 70%)`;
+      } else if (starTypeRandom < 0.15) {
+        // X-shaped stars (5% chance)
+        star.classList.add('x-shape');
+      } else if (starTypeRandom < 0.2) {
+        // Pulsating stars (5% chance)
+        star.classList.add('pulsate');
+        const pulsateDelay = Math.random() * 5;
+        star.style.animationDelay = `${pulsateDelay}s`;
+      } else if (starTypeRandom < 0.25) {
+        // Binary stars (5% chance)
+        star.classList.add('binary');
+        const rotationSpeed = 3 + Math.random() * 7;
+        star.style.setProperty('--rotation-duration', `${rotationSpeed}s`);
+      } else if (starTypeRandom < 0.45) {
+        // Some stars are brighter (20% chance)
+        star.classList.add('bright');
+      } else if (starTypeRandom < 0.65) {
+        // Some stars twinkle (20% chance)
         star.classList.add('twinkle');
         
         // Random animation delay for twinkling
         const delay = Math.random() * 4;
         star.style.animationDelay = `${delay}s`;
       }
+      // The rest are normal stars (35%)
       
       // Add to container
       spaceContainer.appendChild(star);
+      
+      // For binary stars, create companion star
+      if (star.classList.contains('binary')) {
+        const companion = document.createElement('div');
+        companion.classList.add('star', 'companion');
+        // Companion star is usually dimmer than the main star
+        companion.style.opacity = '0.7';
+        // Add companion to the binary star system
+        star.appendChild(companion);
+      }
     }
     
     // Create initial asteroids
@@ -1689,15 +617,32 @@
 
     // Background music controls
     const bgm = document.getElementById('bgm');
-    const musicControl = document.getElementById('music-control');
     const musicNotification = document.getElementById('music-notification');
-    let isMusicPlaying = true; // Default state: ON
+    const playPauseBtn = document.getElementById('play-pause');
+    const prevTrackBtn = document.getElementById('prev-track');
+    const nextTrackBtn = document.getElementById('next-track');
+    const trackNameElement = document.getElementById('track-name');
+    
+    const tracks = ['1.mp3', '2.mp3', '3.mp3'];
+    // Randomize the initial track
+    let currentTrackIndex = Math.floor(Math.random() * tracks.length);
+    let isMusicPlaying = true; // Default state: ON since we're using autoplay
+    let userHasInteracted = false; // Track if user has interacted with the page
+    
+    // Set the initial track
+    function setInitialTrack() {
+      const randomTrack = tracks[currentTrackIndex];
+      bgm.querySelector('source').src = `audio/${randomTrack}`;
+      trackNameElement.textContent = randomTrack;
+      bgm.load();
+      tryPlayMusic();
+    }
     
     // Function to toggle music
     function toggleMusic() {
       if (isMusicPlaying) {
         bgm.pause();
-        musicControl.textContent = 'MUSIC: OFF';
+        playPauseBtn.textContent = '▶';
         // Hide notification if visible
         musicNotification.classList.remove('show');
       } else {
@@ -1706,8 +651,39 @@
       isMusicPlaying = !isMusicPlaying;
     }
     
-    // Add click event to music control button
-    musicControl.addEventListener('click', toggleMusic);
+    // Play/Pause button functionality
+    playPauseBtn.addEventListener('click', function(e) {
+      e.stopPropagation(); // Prevent the document click handler from firing
+      toggleMusic();
+    });
+    
+    // Previous track functionality
+    prevTrackBtn.addEventListener('click', function(e) {
+      e.stopPropagation(); // Prevent the document click handler from firing
+      currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+      changeTrack(tracks[currentTrackIndex]);
+    });
+    
+    // Next track functionality
+    nextTrackBtn.addEventListener('click', function(e) {
+      e.stopPropagation(); // Prevent the document click handler from firing
+      currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+      changeTrack(tracks[currentTrackIndex]);
+    });
+    
+    // Function to change track
+    function changeTrack(trackName) {
+      // Update source
+      bgm.querySelector('source').src = `audio/${trackName}`;
+      // Update track name display
+      trackNameElement.textContent = trackName;
+      // Reload audio element
+      bgm.load();
+      // If music was playing, start playing the new track
+      if (isMusicPlaying) {
+        tryPlayMusic();
+      }
+    }
     
     // Helper function to attempt playing music
     function tryPlayMusic() {
@@ -1717,7 +693,7 @@
       if (playPromise !== undefined) {
         playPromise.then(() => {
           console.log("Music playback successful");
-          musicControl.textContent = 'MUSIC: ON';
+          playPauseBtn.textContent = '❚❚';
           // Hide notification if visible
           musicNotification.classList.remove('show');
         }).catch(error => {
@@ -1732,8 +708,10 @@
     
     // Function to show the music notification
     function showMusicNotification() {
+      // Only show the center notification 
       musicNotification.classList.add('show');
-      // Auto-hide after 5 seconds
+      
+      // Auto-hide center notification after 5 seconds
       setTimeout(() => {
         musicNotification.classList.remove('show');
       }, 5000);
@@ -1741,62 +719,88 @@
     
     // Initialize music on page load
     function initializeMusic() {
-      // Add autoplay attribute
-      bgm.setAttribute('autoplay', '');
-      bgm.volume = 0.5;
+      // Set the initial random track
+      setInitialTrack();
       
-      // Try to play immediately
-      tryPlayMusic();
-      
-      // If music doesn't start playing within 500ms, assume autoplay blocked
-      setTimeout(() => {
-        if (bgm.paused && isMusicPlaying) {
-          console.log("Autoplay appears to be blocked - waiting for user interaction");
-          showMusicNotification();
-        }
-      }, 500);
+      // Set play button state based on autoplay result
+      if (bgm.paused) {
+        playPauseBtn.textContent = '▶';
+        // If music is paused despite autoplay attribute, show notification
+        setTimeout(() => {
+          if (bgm.paused && isMusicPlaying) {
+            console.log("Autoplay appears to be blocked - waiting for user interaction");
+            showMusicNotification();
+          }
+        }, 500);
+      } else {
+        playPauseBtn.textContent = '❚❚';
+      }
     }
     
-    // Run initialization
-    initializeMusic();
+    // Run initialization after DOM is loaded
+    document.addEventListener('DOMContentLoaded', initializeMusic);
     
-    // Hide notification when user interacts with the page
-    document.addEventListener('click', function() {
-      musicNotification.classList.remove('show');
-    });
-    
-    // Play music on any user interaction with the page
-    const userInteractionEvents = ['click', 'touchstart', 'keydown', 'scroll', 'mousedown'];
-    
-    function onFirstUserInteraction() {
+    // Function to handle all user interactions
+    function onUserInteraction(e) {
       if (bgm.paused && isMusicPlaying) {
         console.log("User interaction detected - attempting to play music");
-        tryPlayMusic();
+        // Don't try to play if the click was on a music control button
+        if (!e.target.closest('.player-controls')) {
+          tryPlayMusic();
+        }
         
-        // Hide notification
+        // Hide notifications
         musicNotification.classList.remove('show');
+        
+        // Mark that the user has interacted
+        userHasInteracted = true;
       }
-      
-      // Remove all event listeners after first interaction
-      userInteractionEvents.forEach(event => {
-        document.removeEventListener(event, onFirstUserInteraction);
-      });
     }
     
-    // Add multiple event listeners for user interaction
-    userInteractionEvents.forEach(event => {
-      document.addEventListener(event, onFirstUserInteraction);
+    // Handle clicks anywhere on the document - use capture phase to ensure it's caught first
+    document.addEventListener('click', onUserInteraction, true);
+    
+    // Also handle other user interactions (for browsers that block audio until specific gestures)
+    ['touchstart', 'keydown', 'mousedown'].forEach(eventType => {
+      document.addEventListener(eventType, onUserInteraction, true);
     });
     
+    // Special handling for scroll event
+    document.addEventListener('scroll', function() {
+      // We no longer need to handle the persistent notification here
+      // Just ensure music plays when clicked anywhere
+    });
+
     // Check music state periodically and update UI
     setInterval(() => {
-      if (!bgm.paused && musicControl.textContent === 'MUSIC: OFF') {
-        musicControl.textContent = 'MUSIC: ON';
-      } else if (bgm.paused && musicControl.textContent === 'MUSIC: ON' && isMusicPlaying) {
-        // If music should be playing but isn't, try again
-        tryPlayMusic();
+      if (bgm.paused && isMusicPlaying) {
+        // Update play/pause button state
+        playPauseBtn.textContent = '▶';
+      } else if (!bgm.paused) {
+        // Music is playing - hide notification
+        musicNotification.classList.remove('show');
+        
+        // Update button if needed
+        if (!isMusicPlaying) {
+          isMusicPlaying = true;
+          playPauseBtn.textContent = '❚❚';
+        }
       }
     }, 1000);
+
+    // Pause music when window loses focus, resume when focus regained
+    window.addEventListener('blur', function() {
+      if (!bgm.paused && isMusicPlaying) {
+        bgm.pause();
+        // Keep isMusicPlaying true so we can resume on focus
+      }
+    });
+    
+    window.addEventListener('focus', function() {
+      if (bgm.paused && isMusicPlaying) {
+        tryPlayMusic();
+      }
+    });
 
     // Mobile viewport height fix (for iOS/mobile browsers)
     function setViewportHeight() {
@@ -1817,7 +821,7 @@
     // Enhanced touch handling for mobile
     document.addEventListener('DOMContentLoaded', function() {
       // Add active state for touch interfaces
-      const touchElements = document.querySelectorAll('.blog-item, .project-item, .social-link, .music-control, .hero-center-text');
+      const touchElements = document.querySelectorAll('.blog-item, .project-item, .social-link, .hero-center-text');
       
       touchElements.forEach(el => {
         el.addEventListener('touchstart', function() {
@@ -1897,7 +901,7 @@
         createProjectile();
       }
     });
-
+    
     // Create booster particles
     function createBoosterParticle() {
       // Only proceed if spaceship is in the DOM
@@ -1949,12 +953,81 @@
     // Generate booster particles continuously
     const boosterInterval = setInterval(createBoosterParticle, 50);
     
-    // Also shoot on click
-    document.addEventListener('click', function(event) {
-      // Only create a projectile if the spaceship is visible and not clicking on music control
-      if (spaceship.parentNode && !event.target.closest('.music-control')) {
-        createProjectile();
-      }
+    // Sci-fi section enhancements
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get all sections
+      const sections = document.querySelectorAll('.section');
+      
+      // Add hover effects to sections
+      sections.forEach(section => {
+        section.addEventListener('mouseenter', function() {
+          // Intensify the glow effect
+          this.style.boxShadow = '0 0 30px rgba(51, 255, 102, 0.3), inset 0 0 15px rgba(51, 255, 102, 0.15)';
+          
+          // Make indicator pulse faster
+          const indicator = this.querySelector('.section-indicator');
+          if (indicator) {
+            indicator.style.animation = 'pulse 1s infinite';
+          }
+          
+          // Add subtle transform
+          this.style.transform = 'translateY(-3px)';
+        });
+        
+        section.addEventListener('mouseleave', function() {
+          // Restore original styles
+          this.style.boxShadow = '';
+          
+          // Reset indicator animation
+          const indicator = this.querySelector('.section-indicator');
+          if (indicator) {
+            indicator.style.animation = 'pulse 2s infinite';
+          }
+          
+          // Reset transform
+          this.style.transform = '';
+        });
+      });
+      
+      // Add hover effects to blog items
+      const blogItems = document.querySelectorAll('.blog-item');
+      blogItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+          // Animate indicator
+          const indicator = this.querySelector('.blog-item-indicator');
+          if (indicator) {
+            indicator.style.animation = 'pulse 0.8s infinite';
+          }
+        });
+        
+        item.addEventListener('mouseleave', function() {
+          // Reset indicator animation
+          const indicator = this.querySelector('.blog-item-indicator');
+          if (indicator) {
+            indicator.style.animation = '';
+          }
+        });
+      });
+      
+      // Add hover effects to project items
+      const projectItems = document.querySelectorAll('.project-item');
+      projectItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+          // Add glow effect to image
+          const image = this.querySelector('.project-image');
+          if (image) {
+            image.style.filter = 'contrast(1.2) brightness(1.1) saturate(1.3)';
+          }
+        });
+        
+        item.addEventListener('mouseleave', function() {
+          // Reset image filter
+          const image = this.querySelector('.project-image');
+          if (image) {
+            image.style.filter = '';
+          }
+        });
+      });
     });
   </script>
 
