@@ -5,8 +5,8 @@
 }
 
 .header {
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #010009;
+  border-bottom: 2px solid rgba(138, 119, 254, 0.55);
   position: fixed;
   width: 100%;
   top: 0;
@@ -27,26 +27,26 @@
     Ubuntu, Cantarell, sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #f4f6ef;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .site-title:hover {
-  color: #2563eb;
+  color: #8a77fe;
 }
 
 .back-link {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, sans-serif;
-  color: #2563eb;
+  color: #8a77fe;
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.2s ease;
 }
 
 .back-link:hover {
-  color: #1e40af;
+  color: #f4f6ef;
 }
 
 @media (max-width: 640px) {

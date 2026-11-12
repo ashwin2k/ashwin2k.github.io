@@ -1,1036 +1,137 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ashwin Kumar Udayakumar</title>
+    <meta
+      name="description"
+      content="Ashwin Kumar Udayakumar — applied AI engineer. Fullstack and agentic systems, previously DeasyLabs and Santé (YC S23), NYU Courant."
+    />
+    <link rel="icon" href="imgs/favicon-32x32.png" />
+    <meta name="theme-color" content="#010009" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css?v=persistent-name-1" />
+  </head>
+  <body>
+    <canvas id="world" aria-hidden="true"></canvas>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Ashwin Kumar Udayakumar</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <div class="hud" id="top">
+      <header class="top">
+        <a class="logo" href="#top">Ashwin</a>
+        <nav>
+          <a href="#work">Work</a>
+          <a href="#about">About</a>
+          <a href="#notes">Notes</a>
+        </nav>
+        <a class="pill" href="mailto:ashwin102000@gmail.com">Email</a>
+      </header>
 
-  <link rel="icon" href="imgs/favicon-32x32.png" />
-  <meta name="theme-color" content="#0a0a0a">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .section-title {
-      padding-left: 30px;
-      padding-right: 30px;
-    }
-    
-    .persistent-music-notification {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background-color: rgba(0, 0, 0, 0.7);
-      color: var(--color-text);
-      padding: 10px;
-      border: 1px solid var(--color-text);
-      box-shadow: 0 0 10px rgba(51, 255, 102, 0.5);
-      z-index: 100;
-      font-size: 10px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-    
-    .persistent-music-notification.show {
-      opacity: 1;
-      pointer-events: auto;
-      animation: pulse 2s infinite;
-    }
-    
-    /* 8-bit Nebulae styles */
-    .nebula {
-      position: absolute;
-      background: transparent;
-      border-radius: 50%;
-      filter: blur(20px);
-      opacity: 0.15;
-      z-index: 0;
-      pointer-events: none;
-      transform: scale(1);
-      background-image: radial-gradient(circle, transparent 30%, currentColor);
-      image-rendering: pixelated;
-    }
-    
-    .nebula::before {
-      content: '';
-      position: absolute;
-      top: 10%;
-      left: 10%;
-      width: 80%;
-      height: 80%;
-      background-color: currentColor;
-      filter: blur(25px);
-      opacity: 0.3;
-      border-radius: 40%;
-    }
-    
-    .nebula.small {
-      width: 120px;
-      height: 120px;
-    }
-    
-    .nebula.medium {
-      width: 200px;
-      height: 200px;
-    }
-    
-    .nebula.large {
-      width: 300px;
-      height: 300px;
-    }
-  </style>
-</head>
-
-<body>
-  <!-- Noise overlay -->
-  <div class="noise"></div>
-  
-  <!-- Scan lines effect -->
-  <div class="scan-lines"></div>
-
-  <!-- Background Music -->
-  <audio id="bgm" loop autoplay preload="auto">
-    <source src="audio/3.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-  
-  <!-- Music player UI -->
-  <div class="music-player" id="music-player">
-    <div class="track-info">TRACK: <span id="track-name">3.mp3</span></div>
-    <div class="player-controls">
-      <button id="prev-track">◄</button>
-      <button id="play-pause">▶</button>
-      <button id="next-track">►</button>
-    </div>
-  </div>
-  
-  <!-- Music notification for autoplay blocked -->
-  <div class="music-notification" id="music-notification">
-    CLICK ANYWHERE TO ENABLE MUSIC
-  </div>
-  
-  <!-- Persistent music notification -->
-  <!-- Removed bottom right notification -->
-
-  <!-- Hero Section -->
-  <section class="hero-section relative flex flex-col items-center justify-center">
-    <div class="container">
-
-      <img src="imgs/8-bit-img.png" alt="Ashwin Kumar Udayakumar" class="profile-image" />
-      <div class="site-header">
-        <h1 class="site-title">ASHWIN KUMAR UDAYAKUMAR<span class="cursor"></span></h1>
+      <div class="hero-copy">
+        <p class="eyebrow">ENGINEER / BUILDER / EXPLORER</p>
+        <h1>ASHWIN</h1>
+        <p class="tag">Building agentic systems at instead.com.</p>
       </div>
-      <p class="tagline">Applied AI Engineer @ instead.com • Ex-YC Startups • NYU Courant Grad</p>
 
-      <div class="social-links">
-        <a href="https://github.com/ashwin2k" class="social-link" aria-label="GitHub Profile">
-          <img src="imgs/8bit-github.png" alt="GitHub" width="32" height="32" style="image-rendering: pixelated;">
-        </a>
-        <a href="https://www.linkedin.com/in/ashwin-kumar14/" class="social-link" aria-label="LinkedIn Profile">
-          <img src="imgs/8bit-linkedin.png" alt="LinkedIn" width="32" height="32" style="image-rendering: pixelated;">
-        </a>
-        <a href="mailto:ashwin102000@gmail.com" class="social-link" aria-label="Email">
-          <img src="imgs/8bit-mail.png" alt="Email" width="32" height="32" style="image-rendering: pixelated;">
-        </a>
-      </div>
-    </div>
-      <!-- PRESS START button, fixed to bottom -->
-  <a href="#content" class="hero-center-text">
-    PRESS START
-    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-left: 10px; display: inline-block;">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-    </svg>
-  </a>
-  </section>
-
-  <!-- Content Section -->
-  <section id="content" class="content-section">
-    <div class="container">
-      <!-- About Section -->
-      <div class="section">
-        <div class="section-corner top-left"></div>
-        <div class="section-corner top-right"></div>
-        <div class="section-corner bottom-left"></div>
-        <div class="section-corner bottom-right"></div>
-        <div class="section-indicator"></div>
-        <div class="section-scan"></div>
-        <div class="corner-decoration"></div>
-        <h2 class="section-title">ABOUT</h2>
-        <p class="about-text">
-          I started freelancing @ 16yo, currently focusing on Fullstack Development and Agentic AI. Worked with
-          multiple YComb startups - DeasyLabs (YC S23), Santé (YC S23)
-        </p>
-        <ul class="skill-list">
-          <li class="skill-item">Open-source LLMs</li>
-          <li class="skill-item">Compilers</li>
-          <li class="skill-item">JEPA models</li>
-          <li class="skill-item">Computer Vision (did research on Monocular depth estimation)</li>
-          <li class="skill-item"><i>Meal prep (I actually mean it)</i></li>
+      <button id="scene-motion" class="scene-motion" type="button" aria-pressed="true">Pause scene Ⅱ</button>
+      <span class="scroll-note">SCROLL TO EXPLORE ↓</span>
+      <div class="facts">
+        <ul>
+          <li>Open-source LLMs</li>
+          <li>Compilers</li>
         </ul>
-        <p class="about-text">
-          I also host my personal projects (and open-source projects) on <a href="https://www.github.com/ashwin2k">GitHub</a>,
-          and I write about ML/DL research on
-          <a href="https://medium.com/@ashwin102000">Medium</a>.
-        </p>
-      </div>
-
-      <!-- Blog Posts Section -->
-      <div class="section">
-        <div class="section-corner top-left"></div>
-        <div class="section-corner top-right"></div>
-        <div class="section-corner bottom-left"></div>
-        <div class="section-corner bottom-right"></div>
-        <div class="section-indicator"></div>
-        <div class="section-scan"></div>
-        <div class="corner-decoration"></div>
-        <h2 class="section-title">BLOGS</h2>
-        <div class="blog-list">
-          <a class="blog-item" href="pages/json-exploit.html">
-            <div class="blog-item-indicator"></div>
-            <h3>The JSON Prompt Exploit that breaks ChatGPT</h3>
-          </a>
-          <a class="blog-item" href="pages/optimizing-heady.html">
-            <div class="blog-item-indicator"></div>
-            <h3>Optimizing heavy models with early exit branches</h3>
-          </a>
-          <a class="blog-item" href="pages/green-preds.html">
-            <div class="blog-item-indicator"></div>
-            <h3>Going green by recycling predictions!</h3>
-          </a>
-          <a class="blog-item" href="pages/early-exit.html">
-            <div class="blog-item-indicator"></div>
-            <h3>Early Exiting for Image Captioning Models</h3>
-          </a>
-          <a class="blog-item" href="https://ashwin2k.github.io/tmrl-rnn/">
-            <div class="blog-item-indicator"></div>
-            <h3>Autonomous Video Game Racing with Reinforcement Learning</h3>
-          </a>
-        </div>
-      </div>
-
-      <!-- Projects Section -->
-      <div class="section">
-        <div class="section-corner top-left"></div>
-        <div class="section-corner top-right"></div>
-        <div class="section-corner bottom-left"></div>
-        <div class="section-corner bottom-right"></div>
-        <div class="section-indicator"></div>
-        <div class="section-scan"></div>
-        <div class="corner-decoration"></div>
-        <h2 class="section-title">PROJECTS</h2>
-        <div class="project-list">
-          <a href="https://github.com/Intro-To-Deep-Learning-Systems/Using-Video-summarization-techniques-for-effective-search-indexing"
-            class="project-item">
-            <div class="project-glow"></div>
-            <img src="imgs/video-summary.webp" alt="" class="project-image" />
-            <div class="project-content">
-              <h3>Video Summarization for Search Indexing</h3>
-              <p>Deep Learning Systems project for efficient video search indexing</p>
-            </div>
-          </a>
-
-          <a href="https://github.com/ashwin2k/Spartan-Chat-Engine" class="project-item">
-            <div class="project-glow"></div>
-            <img src="imgs/spartanchat.webp" alt="" class="project-image" />
-            <div class="project-content">
-              <h3>SpartanChat</h3>
-              <p>A Chatbot built using LLamaindex that uses Web Context and RAG Techniques</p>
-            </div>
-          </a>
-
-          <a href="https://ashwin2k.com/tmrl-rnn/" class="project-item">
-            <div class="project-glow"></div>
-            <img src="imgs/600px-Trackmania.jpg" alt="" class="project-image" />
-            <div class="project-content">
-              <h3>Trackmania Racing AI</h3>
-              <p>An AI racing agent that learns to play Trackmania using Reinforcement Learning</p>
-            </div>
-          </a>
-
-          <a href="https://github.com/ashwin2k/AnimeGAN" class="project-item">
-            <div class="project-glow"></div>
-            <img src="imgs/anime.png" alt="" class="project-image" />
-            <div class="project-content">
-              <h3>AnimeGAN</h3>
-              <p>A scratch implementation of DCGAN with multi-GPU support to create anime style faces</p>
-            </div>
-          </a>
-        </div>
+        <a class="address" href="mailto:ashwin102000@gmail.com">Let’s build something ↗</a>
+        <ul>
+          <li>JEPA models</li>
+          <li>Computer vision</li>
+        </ul>
       </div>
     </div>
-  </section>
 
-  <!-- Space Background -->
-  <div class="space-container" id="space-container">
-    <!-- Moon element -->
-    <div class="moon"></div>
-    <!-- Planet element -->
-    <div class="planet"></div>
-    <!-- Satellite will be added via JavaScript -->
-    <!-- Spaceship will be added via JavaScript -->
-  </div>
+    <main class="sheet">
+      <section id="about" class="block">
+        <p class="label">About</p>
+        <p class="about-lead">
+          Freelancing since 16. Now fullstack and agentic AI, after DeasyLabs and Santé, both YC S23. NYU Courant.
+        </p>
+        <p class="quiet">
+          Code on <a href="https://github.com/ashwin2k">GitHub</a>. Notes on
+          <a href="https://medium.com/@ashwin102000">Medium</a>. Meal prep is a real hobby.
+        </p>
+      </section>
 
-  <script>
-    // Generate space elements
-    const spaceContainer = document.getElementById('space-container');
-    const numberOfAsteroids = 150; // Increased from 80
-    const numberOfStars = 200;
-    const numberOfNebulae = 8; // Number of nebulae to create
-    
-    // Create 8-bit nebulae
-    for (let i = 0; i < numberOfNebulae; i++) {
-      createNebula();
-    }
-    
-    function createNebula() {
-      const nebula = document.createElement('div');
-      nebula.classList.add('nebula');
-      
-      // Random size class
-      const sizeRandom = Math.random();
-      if (sizeRandom < 0.3) {
-        nebula.classList.add('small');
-      } else if (sizeRandom < 0.7) {
-        nebula.classList.add('medium');
-      } else {
-        nebula.classList.add('large');
-      }
-      
-      // Random position
-      const posX = Math.random() * 100;
-      const posY = Math.random() * 100;
-      nebula.style.left = `${posX}%`;
-      nebula.style.top = `${posY}%`;
-      
-      // Random color based on sci-fi palette
-      const colorPalette = [
-        'rgba(51, 255, 102, 0.3)',    // Green
-        'rgba(0, 191, 255, 0.3)',     // Cyan
-        'rgba(138, 43, 226, 0.3)',    // Purple
-        'rgba(255, 105, 180, 0.3)',   // Pink
-        'rgba(255, 165, 0, 0.3)',     // Orange
-        'rgba(220, 20, 60, 0.3)'      // Crimson
-      ];
-      
-      const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
-      nebula.style.color = color;
-      
-      // Random rotation
-      const rotation = Math.random() * 360;
-      nebula.style.transform = `rotate(${rotation}deg)`;
-      
-      // Add very slow pulsating animation
-      const animationDuration = 20 + Math.random() * 40;
-      nebula.style.animation = `nebula-pulse ${animationDuration}s ease-in-out infinite alternate`;
-      
-      // Add to container (before other elements to ensure it's in the background)
-      spaceContainer.prepend(nebula);
-      
-      // Add keyframes for the nebula pulsating
-      if (!document.querySelector('#nebula-keyframes')) {
-        const style = document.createElement('style');
-        style.id = 'nebula-keyframes';
-        style.textContent = `
-          @keyframes nebula-pulse {
-            0% {
-              transform: rotate(${rotation}deg) scale(1);
-              opacity: 0.15;
-            }
-            50% {
-              transform: rotate(${rotation + 5}deg) scale(1.1);
-              opacity: 0.2;
-            }
-            100% {
-              transform: rotate(${rotation}deg) scale(1);
-              opacity: 0.15;
-            }
-          }
-        `;
-        document.head.appendChild(style);
-      }
-    }
-    
-    // Add spaceship
-    const spaceship = document.createElement('div');
-    spaceship.classList.add('spaceship');
-    spaceContainer.appendChild(spaceship);
-    
-    // Function to create comets
-    function createComet() {
-      const comet = document.createElement('img');
-      comet.src = "imgs/comet.png";
-      comet.classList.add('comet');
-      
-      // Randomly choose either top or right edge
-      const edgeChoice = Math.random() > 0.5 ? 'top' : 'right';
-      
-      let startX, startY;
-      
-      if (edgeChoice === 'top') {
-        // Random position along the top edge
-        startX = Math.random() * 100;
-        startY = 0;
-      } else {
-        // Random position along the right edge
-        startX = 100;
-        startY = Math.random() * 100;
-      }
-      
-      comet.style.left = `${startX}%`;
-      comet.style.top = `${startY}%`;
-      
-      // Random animation duration (faster = more dramatic)
-      const duration = 1.5 + Math.random() * 1.5; // 1.5-3 seconds
-      comet.style.animation = `comet-move ${duration}s linear forwards`;
-      
-      // Add to container
-      spaceContainer.appendChild(comet);
-      
-      // Remove comet after animation completes
-      setTimeout(() => {
-        comet.remove();
-      }, duration * 1000);
-    }
-    
-    // Create comets at random intervals
-    function scheduleNextComet() {
-      // Random interval between 2-8 seconds
-      const nextCometDelay = 2000 + Math.random() * 6000;
-      
-      setTimeout(() => {
-        createComet();
-        scheduleNextComet();
-      }, nextCometDelay);
-    }
-    
-    // Start the comet scheduling
-    scheduleNextComet();
-    
-    // Create one initial comet
-    setTimeout(createComet, 1000);
-    
-    // Add satellite
-    const satellite = document.createElement('div');
-    satellite.classList.add('satellite');
-    spaceContainer.appendChild(satellite);
-    
-    // Add solar panels to satellite
-    const solarPanelLeft = document.createElement('div');
-    solarPanelLeft.classList.add('solar-panel-left');
-    satellite.appendChild(solarPanelLeft);
-    
-    const solarPanelRight = document.createElement('div');
-    solarPanelRight.classList.add('solar-panel-right');
-    satellite.appendChild(solarPanelRight);
-    
-    // Set initial satellite position
-    let satellitePosition = {
-      x: Math.random() * 100, // Spawn anywhere horizontally
-      y: Math.random() * 100  // Spawn anywhere vertically
-    };
-    
-    // Update satellite position and animation
-    function animateSatellite() {
-      // Set initial position
-      satellite.style.left = `${satellitePosition.x}%`;
-      satellite.style.top = `${satellitePosition.y}%`;
-      
-      // Very slow orbital movement
-      let orbitAngle = Math.random() * Math.PI * 2; // Random start angle
-      let orbitSpeed = 0.0002; // Very slow movement
-      let orbitRadius = {
-        x: 15 + Math.random() * 5, // Orbit radius X
-        y: 10 + Math.random() * 3  // Orbit radius Y
-      };
-      let orbitCenter = {
-        x: satellitePosition.x, // Use initial spawn position as orbit center
-        y: satellitePosition.y  // Use initial spawn position as orbit center
-      };
-      let rotationAngle = 0;
-      let rotationSpeed = 0.2; // Continuous rotation speed
-      
-      function moveSatellite() {
-        orbitAngle += orbitSpeed;
-        rotationAngle += rotationSpeed;
-        
-        // Calculate new position based on elliptical orbit
-        satellitePosition.x = orbitCenter.x + Math.cos(orbitAngle) * orbitRadius.x;
-        satellitePosition.y = orbitCenter.y + Math.sin(orbitAngle) * orbitRadius.y;
-        
-        // Update position
-        satellite.style.left = `${satellitePosition.x}%`;
-        satellite.style.top = `${satellitePosition.y}%`;
-        
-        // Update rotation - continuous 360-degree rotation
-        satellite.style.transform = `rotate(${rotationAngle}deg)`;
-        
-        // Continue animation
-        requestAnimationFrame(moveSatellite);
-      }
-      
-      // Start animation
-      moveSatellite();
-    }
-    
-    // Start satellite animation
-    animateSatellite();    
-    // Track current spaceship position (for shooting)
-    let spaceshipPosition = { x: 0, y: 0 };
-    
-    // Create stars (static background elements)
-    for (let i = 0; i < numberOfStars; i++) {
-      createStar();
-    }
+      <section id="work" class="block">
+        <p class="label">Selected work</p>
+        <div class="rows">
+          <a
+            class="row"
+            href="https://github.com/Intro-To-Deep-Learning-Systems/Using-Video-summarization-techniques-for-effective-search-indexing"
+          >
+            <span class="idx">01</span>
+            <span class="row-copy">
+              <strong>Video summarization</strong>
+              <span>Search indexing for long video, built as a deep learning systems project.</span>
+            </span>
+            <img src="imgs/video-summary.webp" alt="" />
+          </a>
+          <a class="row" href="https://github.com/ashwin2k/Spartan-Chat-Engine">
+            <span class="idx">02</span>
+            <span class="row-copy">
+              <strong>SpartanChat</strong>
+              <span>A chatbot on LlamaIndex, with web context and RAG.</span>
+            </span>
+            <img src="imgs/spartanchat.webp" alt="" />
+          </a>
+          <a class="row" href="https://ashwin2k.com/tmrl-rnn/">
+            <span class="idx">03</span>
+            <span class="row-copy">
+              <strong>Trackmania racing AI</strong>
+              <span>An agent that learns to drive Trackmania with reinforcement learning.</span>
+            </span>
+            <img src="imgs/600px-Trackmania.jpg" alt="" />
+          </a>
+          <a class="row" href="https://github.com/ashwin2k/AnimeGAN">
+            <span class="idx">04</span>
+            <span class="row-copy">
+              <strong>AnimeGAN</strong>
+              <span>A from-scratch DCGAN with multi-GPU support for anime-style faces.</span>
+            </span>
+            <img src="imgs/anime.png" alt="" />
+          </a>
+        </div>
+      </section>
 
-    function createStar() {
-      const star = document.createElement('div');
-      star.classList.add('star');
-      
-      // Random position
-      const posX = Math.random() * 100;
-      const posY = Math.random() * 100;
-      star.style.left = `${posX}%`;
-      star.style.top = `${posY}%`;
-      
-      // Determine star type
-      const starTypeRandom = Math.random();
-      
-      if (starTypeRandom < 0.1) {
-        // Colored stars (10% chance)
-        star.classList.add('colored');
-        const hues = ['60', '190', '290', '330', '35']; // Yellow, Blue, Purple, Pink, Orange
-        const hue = hues[Math.floor(Math.random() * hues.length)];
-        star.style.backgroundColor = `hsl(${hue}, 100%, 85%)`;
-        star.style.boxShadow = `0 0 4px hsl(${hue}, 100%, 70%)`;
-      } else if (starTypeRandom < 0.15) {
-        // X-shaped stars (5% chance)
-        star.classList.add('x-shape');
-      } else if (starTypeRandom < 0.2) {
-        // Pulsating stars (5% chance)
-        star.classList.add('pulsate');
-        const pulsateDelay = Math.random() * 5;
-        star.style.animationDelay = `${pulsateDelay}s`;
-      } else if (starTypeRandom < 0.25) {
-        // Binary stars (5% chance)
-        star.classList.add('binary');
-        const rotationSpeed = 3 + Math.random() * 7;
-        star.style.setProperty('--rotation-duration', `${rotationSpeed}s`);
-      } else if (starTypeRandom < 0.45) {
-        // Some stars are brighter (20% chance)
-        star.classList.add('bright');
-      } else if (starTypeRandom < 0.65) {
-        // Some stars twinkle (20% chance)
-        star.classList.add('twinkle');
-        
-        // Random animation delay for twinkling
-        const delay = Math.random() * 4;
-        star.style.animationDelay = `${delay}s`;
-      }
-      // The rest are normal stars (35%)
-      
-      // Add to container
-      spaceContainer.appendChild(star);
-      
-      // For binary stars, create companion star
-      if (star.classList.contains('binary')) {
-        const companion = document.createElement('div');
-        companion.classList.add('star', 'companion');
-        // Companion star is usually dimmer than the main star
-        companion.style.opacity = '0.7';
-        // Add companion to the binary star system
-        star.appendChild(companion);
-      }
-    }
-    
-    // Create initial asteroids
-    for (let i = 0; i < numberOfAsteroids; i++) {
-      createAsteroid();
-    }
-    
-    function createAsteroid() {
-      const asteroid = document.createElement('div');
-      asteroid.classList.add('asteroid');
-      
-      // Random size class
-      const sizeRandom = Math.random();
-      if (sizeRandom < 0.6) {
-        asteroid.classList.add('small');
-      } else if (sizeRandom < 0.9) {
-        asteroid.classList.add('medium');
-      } else {
-        asteroid.classList.add('large');
-      }
-      
-      // Random position
-      const posX = Math.random() * 100;
-      const posY = Math.random() * 100;
-      asteroid.style.left = `${posX}%`;
-      asteroid.style.top = `${posY}%`;
-      
-      // Random opacity and color variation
-      const opacity = 0.5 + Math.random() * 0.5;
-      asteroid.style.opacity = opacity.toFixed(1);
-      
-      // Color variation - some asteroids have slight color
-      if (Math.random() < 0.2) {
-        // Brownish/redish asteroids
-        const hue = 30 + Math.random() * 30;
-        const saturation = 20 + Math.random() * 30;
-        asteroid.style.backgroundColor = `hsla(${hue}, ${saturation}%, 70%, ${opacity})`;
-      } else if (Math.random() < 0.1) {
-        // Bluish/icy asteroids
-        const hue = 200 + Math.random() * 40;
-        const saturation = 20 + Math.random() * 20;
-        asteroid.style.backgroundColor = `hsla(${hue}, ${saturation}%, 80%, ${opacity})`;
-      }
-      
-      // Animation
-      asteroid.style.animationName = 'float-diagonal';
-      
-      // Random speed between 10s and 40s
-      const duration = 10 + Math.random() * 30;
-      asteroid.style.animationDuration = `${duration}s`;
-      
-      // Random delay
-      const delay = Math.random() * 10;
-      asteroid.style.animationDelay = `-${delay}s`;
-      
-      // Random direction (rotate the animation path)
-      const angle = Math.random() * 360;
-      asteroid.style.animationTimingFunction = 'linear';
-      asteroid.style.transform = `rotate(${angle}deg)`;
-      
-      // Add to container
-      spaceContainer.appendChild(asteroid);
-      
-      // Remove and replace asteroid after animation completes
-      setTimeout(() => {
-        asteroid.remove();
-        createAsteroid();
-      }, (duration + delay) * 1000);
-    }
+      <section id="notes" class="block">
+        <p class="label">Notes</p>
+        <div class="notes">
+          <a href="pages/json-exploit.html">The JSON prompt exploit that breaks ChatGPT</a>
+          <a href="pages/optimizing-heady.html">Optimizing heavy models with early exit branches</a>
+          <a href="pages/green-preds.html">Going green by recycling predictions</a>
+          <a href="pages/early-exit.html">Early exiting for image captioning models</a>
+          <a href="https://ashwin2k.github.io/tmrl-rnn/">Autonomous video game racing with reinforcement learning</a>
+        </div>
+      </section>
 
-    // Background music controls
-    const bgm = document.getElementById('bgm');
-    const musicNotification = document.getElementById('music-notification');
-    const playPauseBtn = document.getElementById('play-pause');
-    const prevTrackBtn = document.getElementById('prev-track');
-    const nextTrackBtn = document.getElementById('next-track');
-    const trackNameElement = document.getElementById('track-name');
-    
-    const tracks = ['1.mp3', '2.mp3', '3.mp3'];
-    // Randomize the initial track
-    let currentTrackIndex = Math.floor(Math.random() * tracks.length);
-    let isMusicPlaying = true; // Default state: ON since we're using autoplay
-    let userHasInteracted = false; // Track if user has interacted with the page
-    
-    // Set the initial track
-    function setInitialTrack() {
-      const randomTrack = tracks[currentTrackIndex];
-      bgm.querySelector('source').src = `audio/${randomTrack}`;
-      trackNameElement.textContent = randomTrack;
-      bgm.load();
-      tryPlayMusic();
-    }
-    
-    // Function to toggle music
-    function toggleMusic() {
-      if (isMusicPlaying) {
-        bgm.pause();
-        playPauseBtn.textContent = '▶';
-        // Hide notification if visible
-        musicNotification.classList.remove('show');
-      } else {
-        tryPlayMusic();
-      }
-      isMusicPlaying = !isMusicPlaying;
-    }
-    
-    // Play/Pause button functionality
-    playPauseBtn.addEventListener('click', function(e) {
-      e.stopPropagation(); // Prevent the document click handler from firing
-      toggleMusic();
-    });
-    
-    // Previous track functionality
-    prevTrackBtn.addEventListener('click', function(e) {
-      e.stopPropagation(); // Prevent the document click handler from firing
-      currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-      changeTrack(tracks[currentTrackIndex]);
-    });
-    
-    // Next track functionality
-    nextTrackBtn.addEventListener('click', function(e) {
-      e.stopPropagation(); // Prevent the document click handler from firing
-      currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-      changeTrack(tracks[currentTrackIndex]);
-    });
-    
-    // Function to change track
-    function changeTrack(trackName) {
-      // Update source
-      bgm.querySelector('source').src = `audio/${trackName}`;
-      // Update track name display
-      trackNameElement.textContent = trackName;
-      // Reload audio element
-      bgm.load();
-      // If music was playing, start playing the new track
-      if (isMusicPlaying) {
-        tryPlayMusic();
-      }
-    }
-    
-    // Helper function to attempt playing music
-    function tryPlayMusic() {
-      bgm.volume = 0.5;
-      const playPromise = bgm.play();
-      
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          console.log("Music playback successful");
-          playPauseBtn.textContent = '❚❚';
-          // Hide notification if visible
-          musicNotification.classList.remove('show');
-        }).catch(error => {
-          console.error("Music playback failed:", error);
-          // Show notification if music should be playing but can't
-          if (isMusicPlaying) {
-            showMusicNotification();
-          }
-        });
-      }
-    }
-    
-    // Function to show the music notification
-    function showMusicNotification() {
-      // Only show the center notification 
-      musicNotification.classList.add('show');
-      
-      // Auto-hide center notification after 5 seconds
-      setTimeout(() => {
-        musicNotification.classList.remove('show');
-      }, 5000);
-    }
-    
-    // Initialize music on page load
-    function initializeMusic() {
-      // Set the initial random track
-      setInitialTrack();
-      
-      // Set play button state based on autoplay result
-      if (bgm.paused) {
-        playPauseBtn.textContent = '▶';
-        // If music is paused despite autoplay attribute, show notification
-        setTimeout(() => {
-          if (bgm.paused && isMusicPlaying) {
-            console.log("Autoplay appears to be blocked - waiting for user interaction");
-            showMusicNotification();
-          }
-        }, 500);
-      } else {
-        playPauseBtn.textContent = '❚❚';
-      }
-    }
-    
-    // Run initialization after DOM is loaded
-    document.addEventListener('DOMContentLoaded', initializeMusic);
-    
-    // Function to handle all user interactions
-    function onUserInteraction(e) {
-      if (bgm.paused && isMusicPlaying) {
-        console.log("User interaction detected - attempting to play music");
-        // Don't try to play if the click was on a music control button
-        if (!e.target.closest('.player-controls')) {
-          tryPlayMusic();
-        }
-        
-        // Hide notifications
-        musicNotification.classList.remove('show');
-        
-        // Mark that the user has interacted
-        userHasInteracted = true;
-      }
-    }
-    
-    // Handle clicks anywhere on the document - use capture phase to ensure it's caught first
-    document.addEventListener('click', onUserInteraction, true);
-    
-    // Also handle other user interactions (for browsers that block audio until specific gestures)
-    ['touchstart', 'keydown', 'mousedown'].forEach(eventType => {
-      document.addEventListener(eventType, onUserInteraction, true);
-    });
-    
-    // Special handling for scroll event
-    document.addEventListener('scroll', function() {
-      // We no longer need to handle the persistent notification here
-      // Just ensure music plays when clicked anywhere
-    });
+      <footer class="footer">
+        <a href="https://github.com/ashwin2k">GitHub</a>
+        <a href="https://www.linkedin.com/in/ashwin-kumar14/">LinkedIn</a>
+        <a href="https://medium.com/@ashwin102000">Medium</a>
+        <a href="mailto:ashwin102000@gmail.com">Email</a>
+      </footer>
+    </main>
 
-    // Check music state periodically and update UI
-    setInterval(() => {
-      if (bgm.paused && isMusicPlaying) {
-        // Update play/pause button state
-        playPauseBtn.textContent = '▶';
-      } else if (!bgm.paused) {
-        // Music is playing - hide notification
-        musicNotification.classList.remove('show');
-        
-        // Update button if needed
-        if (!isMusicPlaying) {
-          isMusicPlaying = true;
-          playPauseBtn.textContent = '❚❚';
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"
         }
       }
-    }, 1000);
-
-    // Pause music when window loses focus, resume when focus regained
-    window.addEventListener('blur', function() {
-      if (!bgm.paused && isMusicPlaying) {
-        bgm.pause();
-        // Keep isMusicPlaying true so we can resume on focus
-      }
-    });
-    
-    window.addEventListener('focus', function() {
-      if (bgm.paused && isMusicPlaying) {
-        tryPlayMusic();
-      }
-    });
-
-    // Mobile viewport height fix (for iOS/mobile browsers)
-    function setViewportHeight() {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-
-    // Set the height initially
-    setViewportHeight();
-
-    // Reset on resize and orientation change
-    window.addEventListener('resize', setViewportHeight);
-    window.addEventListener('orientationchange', setViewportHeight);
-
-    // Update hero section height
-    document.querySelector('.hero-section').style.minHeight = 'calc(var(--vh, 1vh) * 100)';
-
-    // Enhanced touch handling for mobile
-    document.addEventListener('DOMContentLoaded', function() {
-      // Add active state for touch interfaces
-      const touchElements = document.querySelectorAll('.blog-item, .project-item, .social-link, .hero-center-text');
-      
-      touchElements.forEach(el => {
-        el.addEventListener('touchstart', function() {
-          this.style.opacity = '0.8';
-        });
-        
-        el.addEventListener('touchend', function() {
-          this.style.opacity = '1';
-        });
-        
-        el.addEventListener('touchcancel', function() {
-          this.style.opacity = '1';
-        });
-      });
-      
-      // Fix viewport height on orientation change for iOS
-      window.addEventListener('orientationchange', function() {
-        // Small delay to ensure iOS has completed its orientation change
-        setTimeout(setViewportHeight, 200);
-        
-        // Reapply hero section height fix
-        document.querySelector('.hero-section').style.minHeight = 'calc(var(--vh, 1vh) * 100)';
-      });
-      
-      // Prevent zooming on double-tap for touch devices
-      let lastTouchEnd = 0;
-      document.addEventListener('touchend', function(event) {
-        const now = (new Date()).getTime();
-        if (now - lastTouchEnd <= 300) {
-          event.preventDefault();
-        }
-        lastTouchEnd = now;
-      }, false);
-    });
-
-    // Function to create a projectile from the spaceship
-    function createProjectile() {
-      const rect = spaceship.getBoundingClientRect();
-      const spaceContainerRect = spaceContainer.getBoundingClientRect();
-      
-      // Get spaceship position relative to container
-      const shipX = (rect.right - spaceContainerRect.left) / spaceContainerRect.width * 100;
-      const shipY = (rect.top + rect.height/2 - spaceContainerRect.top) / spaceContainerRect.height * 100;
-      
-      // Save current spaceship position
-      spaceshipPosition.x = shipX;
-      spaceshipPosition.y = shipY;
-      
-      const projectile = document.createElement('div');
-      projectile.classList.add('projectile');
-      
-      // Position at the front of the spaceship
-      projectile.style.left = `${shipX}%`;
-      projectile.style.top = `${shipY}%`;
-      
-      // Animation
-      projectile.style.animationName = 'projectile-move';
-      projectile.style.animationDuration = '1.5s';
-      projectile.style.animationTimingFunction = 'linear';
-      
-      // Add to container
-      spaceContainer.appendChild(projectile);
-      
-      // Remove projectile after animation completes
-      setTimeout(() => {
-        projectile.remove();
-      }, 1500);
-    }
-    
-    // Auto-shoot every 2 seconds
-    const shootingInterval = setInterval(createProjectile, 2000);
-    
-    // Also shoot on click
-    document.addEventListener('click', function(event) {
-      // Only create a projectile if the spaceship is visible and not clicking on music control
-      if (spaceship.parentNode && !event.target.closest('.music-control')) {
-        createProjectile();
-      }
-    });
-    
-    // Create booster particles
-    function createBoosterParticle() {
-      // Only proceed if spaceship is in the DOM
-      if (!spaceship.parentNode) return;
-      
-      const rect = spaceship.getBoundingClientRect();
-      const spaceContainerRect = spaceContainer.getBoundingClientRect();
-      
-      // Get spaceship position relative to container
-      const shipX = (rect.left - spaceContainerRect.left) / spaceContainerRect.width * 100;
-      const shipY = (rect.top + rect.height/2 - spaceContainerRect.top) / spaceContainerRect.height * 100;
-      
-      const particle = document.createElement('div');
-      particle.classList.add('booster-particle');
-      
-      // Position at the back of the spaceship
-      particle.style.left = `${shipX}%`;
-      
-      // Randomize vertical position slightly for natural effect
-      const randomYOffset = (Math.random() - 0.5) * 3;
-      particle.style.top = `${shipY + randomYOffset}%`;
-      
-      // Random size variation
-      const size = 1 + Math.random() * 3;
-      particle.style.width = `${size}px`;
-      particle.style.height = `${size}px`;
-      
-      // Random color variation (green to yellow)
-      const hue = 100 + Math.random() * 40;
-      particle.style.backgroundColor = `hsl(${hue}, 100%, 70%)`;
-      
-      // Animation
-      particle.style.animationName = 'particle-move';
-      
-      // Random duration for more natural effect
-      const duration = 0.3 + Math.random() * 0.5;
-      particle.style.animationDuration = `${duration}s`;
-      particle.style.animationTimingFunction = 'linear';
-      
-      // Add to container
-      spaceContainer.appendChild(particle);
-      
-      // Remove particle after animation completes
-      setTimeout(() => {
-        particle.remove();
-      }, duration * 1000);
-    }
-    
-    // Generate booster particles continuously
-    const boosterInterval = setInterval(createBoosterParticle, 50);
-    
-    // Sci-fi section enhancements
-    document.addEventListener('DOMContentLoaded', function() {
-      // Get all sections
-      const sections = document.querySelectorAll('.section');
-      
-      // Add hover effects to sections
-      sections.forEach(section => {
-        section.addEventListener('mouseenter', function() {
-          // Intensify the glow effect
-          this.style.boxShadow = '0 0 30px rgba(51, 255, 102, 0.3), inset 0 0 15px rgba(51, 255, 102, 0.15)';
-          
-          // Make indicator pulse faster
-          const indicator = this.querySelector('.section-indicator');
-          if (indicator) {
-            indicator.style.animation = 'pulse 1s infinite';
-          }
-          
-          // Add subtle transform
-          this.style.transform = 'translateY(-3px)';
-        });
-        
-        section.addEventListener('mouseleave', function() {
-          // Restore original styles
-          this.style.boxShadow = '';
-          
-          // Reset indicator animation
-          const indicator = this.querySelector('.section-indicator');
-          if (indicator) {
-            indicator.style.animation = 'pulse 2s infinite';
-          }
-          
-          // Reset transform
-          this.style.transform = '';
-        });
-      });
-      
-      // Add hover effects to blog items
-      const blogItems = document.querySelectorAll('.blog-item');
-      blogItems.forEach(item => {
-        item.addEventListener('mouseenter', function() {
-          // Animate indicator
-          const indicator = this.querySelector('.blog-item-indicator');
-          if (indicator) {
-            indicator.style.animation = 'pulse 0.8s infinite';
-          }
-        });
-        
-        item.addEventListener('mouseleave', function() {
-          // Reset indicator animation
-          const indicator = this.querySelector('.blog-item-indicator');
-          if (indicator) {
-            indicator.style.animation = '';
-          }
-        });
-      });
-      
-      // Add hover effects to project items
-      const projectItems = document.querySelectorAll('.project-item');
-      projectItems.forEach(item => {
-        item.addEventListener('mouseenter', function() {
-          // Add glow effect to image
-          const image = this.querySelector('.project-image');
-          if (image) {
-            image.style.filter = 'contrast(1.2) brightness(1.1) saturate(1.3)';
-          }
-        });
-        
-        item.addEventListener('mouseleave', function() {
-          // Reset image filter
-          const image = this.querySelector('.project-image');
-          if (image) {
-            image.style.filter = '';
-          }
-        });
-      });
-    });
-  </script>
-
-</body>
-
+    </script>
+    <script type="module" src="js/world.js?v=citadel-grove-3"></script>
+  </body>
 </html>
