@@ -523,7 +523,7 @@ h1 { font-size: clamp(48px, 8.4vw, 116px); letter-spacing: -5px; color: #f3eaf8;
 
 /* Keep the live 3D scene visible beneath the interface. */
 #world { background: #080613; }
-.hud { background: linear-gradient(180deg, #080611a6 0%, #08061118 25%, transparent 50%, #08061116 72%, #141021 100%); }
+.hud { background: linear-gradient(180deg, #08061180 0%, #0806110a 25%, transparent 55%, #08061108 76%, #141021 100%); }
 .hero-copy { text-shadow: 0 2px 18px #080611, 0 2px 5px #080611; }
 .hero-copy h1 { text-shadow: 0 4px 0 #21143b, 0 0 36px #080611; }
 .world-guide { background: linear-gradient(110deg,#120d22d9,#120d2299);backdrop-filter:blur(4px); }

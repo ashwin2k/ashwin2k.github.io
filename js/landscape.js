@@ -8,10 +8,10 @@ export function buildLandscape(scene) {
   let seed = 402;
   const rand = () => { seed = seed * 16807 % 2147483647; return (seed - 1) / 2147483646; };
   const material = (color,kind='plaster') => detailedMaterial(color,kind);
-  const stone = material(0x9185a0,'stone'), soil = material(0x57516b,'earth'), grass = material(0x4f655e,'earth');
-  const roof = material(0x795c80,'tile'), plaster = material(0xbfa8aa), wood = material(0x60504b,'wood');
+  const stone = material(0x9185a0,'stone'), soil = material(0x57516b,'earth'), grass = material(0x728361,'earth');
+  const roof = material(0x806276,'tile'), plaster = material(0xd4c1a9), wood = material(0x60504b,'wood');
   const naturalRock=material(0x827b8e,'earth');
-  const pine = material(0x323f50), pineLight = material(0x455767), snow = material(0xb3a9c6);
+  const pine = material(0x345646), pineLight = material(0x527153), snow = material(0xb3a9c6);
   const warm = new THREE.MeshBasicMaterial({color:0xffd8a1});
   const mesh = (geo,mat,x,y,z,parent=root) => {
     const m = new THREE.Mesh(mat.isMeshStandardMaterial?physicalUV(geo):geo,mat);m.position.set(x,y,z);m.castShadow=m.receiveShadow=!mat.transparent;parent.add(m);return m;
@@ -40,19 +40,27 @@ export function buildLandscape(scene) {
   terrace(-35,25,13,-1);
 
   // A mountain ring surrounds the entire map, so wide camera views remain complete.
+  const mountainMaterial=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1});
+  const mountainLow=new THREE.Color(0x5b7774),mountainHigh=new THREE.Color(0x91a5ad),snowcap=new THREE.Color(0xe0e7e1);
   for(let i=0;i<32;i++) {
     const a=i/32*Math.PI*2,r=84+rand()*17,h=18+rand()*30;
     const x=Math.cos(a)*r,z=Math.sin(a)*r;
     const mountainGeo=new THREE.ConeGeometry(11+rand()*10,h,32,10);
-    const vertices=mountainGeo.attributes.position;
+    const vertices=mountainGeo.attributes.position,colors=[];
+    const mountainColor=new THREE.Color();
     for(let j=0;j<vertices.count;j++){
       const px=vertices.getX(j),py=vertices.getY(j),pz=vertices.getZ(j);
       const angle=Math.atan2(pz,px),height=(py+h/2)/h;
       const ridge=1+.17*Math.sin(angle*7+i)+.08*Math.sin(py*.9+angle*11);
       vertices.setXYZ(j,px*ridge+height*height*3*Math.sin(i),py,pz*ridge+height*height*2*Math.cos(i));
+      mountainColor.copy(mountainLow).lerp(mountainHigh,height*.75);
+      const snowLine=.7+.045*Math.sin(angle*5+i)+.025*Math.sin(angle*11);
+      if(h>30)mountainColor.lerp(snowcap,THREE.MathUtils.smoothstep(height,snowLine,snowLine+.1));
+      colors.push(mountainColor.r,mountainColor.g,mountainColor.b);
     }
+    mountainGeo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
     mountainGeo.computeVertexNormals();
-    mesh(mountainGeo,i%2?soil:naturalRock,x,h/2-10,z);
+    mesh(mountainGeo,mountainMaterial,x,h/2-10,z);
   }
 
   const foliageGeo=cragGeometry(1);
@@ -501,7 +509,11 @@ export function buildLandscape(scene) {
   }
   const smokeGeo=new THREE.BufferGeometry(),smokeData=new Float32Array(chimneys.length*12*3);
   smokeGeo.setAttribute('position',new THREE.BufferAttribute(smokeData,3));
-  root.add(new THREE.Points(smokeGeo,new THREE.PointsMaterial({color:0xb9a7c4,size:.22,transparent:true,opacity:.25,depthWrite:false})));
+  const smokeCanvas=document.createElement('canvas');smokeCanvas.width=smokeCanvas.height=64;
+  const smokeContext=smokeCanvas.getContext('2d'),smokeGradient=smokeContext.createRadialGradient(32,32,0,32,32,32);
+  smokeGradient.addColorStop(0,'rgba(255,255,255,.6)');smokeGradient.addColorStop(.45,'rgba(255,255,255,.25)');smokeGradient.addColorStop(1,'rgba(255,255,255,0)');
+  smokeContext.fillStyle=smokeGradient;smokeContext.fillRect(0,0,64,64);
+  root.add(new THREE.Points(smokeGeo,new THREE.PointsMaterial({map:new THREE.CanvasTexture(smokeCanvas),color:0xc6c6ce,size:.85,transparent:true,opacity:.24,depthWrite:false})));
 
   const cobbleGeo=cragGeometry(1);
   const cobbles=new THREE.InstancedMesh(cobbleGeo,naturalRock,600);
@@ -540,12 +552,12 @@ export function buildLandscape(scene) {
 
   return {
     places:[
-      {name:'The gateway',description:'A lantern-lit path into the old mountains.',position:[-2.8,5.8,18],target:[0,3.3,-12.8]},
-      {name:'Lantern village',description:'Timber cottages, a bustling market square, and the old lantern inn.',position:[-44,23,19],target:[-23,2,-13]},
-      {name:'The observatory',description:'A telescope watching the sky above the eastern ridge.',position:[46,23,1],target:[25,6,-24]},
-      {name:'The high citadel',description:'Stone watchtowers guarding the village roads.',position:[25,29,-19],target:[0,10,-46]},
-      {name:'The trade road',description:'Winding lanes between workshops, cottages, and the old gate.',position:[18,19,35],target:[1,2,18]},
-      {name:'Market square',description:'Canvas stalls, fresh produce, and lantern-lit village streets.',position:[-3,12,52],target:[-16,1,32]},
+      {name:'The gateway',description:'A lantern-lit path into the old mountains.',position:[-3.5,7.5,23],target:[-1,5,-17]},
+      {name:'Lantern village',description:'Timber cottages, a bustling market square, and the old lantern inn.',position:[-64,17,43],target:[-37,4,12]},
+      {name:'The observatory',description:'A telescope watching the sky above the eastern ridge.',position:[43,25,10],target:[18,6,-23]},
+      {name:'The high citadel',description:'Stone watchtowers guarding the village roads.',position:[24,24,-16],target:[-8,14,-53]},
+      {name:'The trade road',description:'Winding lanes between workshops, cottages, and the old gate.',position:[24,15,36],target:[3,3,19]},
+      {name:'Market square',description:'Canvas stalls, fresh produce, and lantern-lit village streets.',position:[-6,10,51],target:[-18,3,30]},
     ],
     update(t,daylight=0) {
       warm.color.setRGB(1,.7,.32).multiplyScalar(1-daylight*.65);

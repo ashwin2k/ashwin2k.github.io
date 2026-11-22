@@ -1,6 +1,7 @@
 import * as THREE from 'three';
-import { createDayNight } from './day-night.js?v=smooth-shadows-1';
-import { buildLandscape } from './landscape.js?v=citadel-grove-3';
+import { createDayNight } from './day-night.js?v=valley-4';
+import { buildLandscape } from './landscape.js?v=valley-4';
+import { buildValley } from './valley.js?v=valley-4';
 import { detailedMaterial, physicalUV, flutedColumn, cragGeometry, batchArchitecture } from './detail.js';
 
 // A geometry-based world: every landmark is part of the live Three.js scene.
@@ -24,8 +25,9 @@ function start() {
   renderer.setClearColor(0x171035);
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x211442, 0.009);
-  const camera = new THREE.PerspectiveCamera(37, 1, 0.1, 180);
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 260);
   const landscape = buildLandscape(scene);
+  const valley = buildValley(scene);
   const world = new THREE.Group();
   scene.add(world);
   let seed = 117;
@@ -91,22 +93,36 @@ function start() {
   }
   // A cracked central keystone projects in front of the arch.
   box(.48,.8,1.34,0,7.26,gateZ,pale);
-  // Portal surface: hand-dithered light with an animated nested aperture.
-  const portalCanvas=document.createElement('canvas');portalCanvas.width=128;portalCanvas.height=192;
-  const pc=portalCanvas.getContext('2d');
-  for(let y=0;y<192;y++) for(let x=0;x<128;x++){
-    const v=Math.max(0,1-Math.hypot((x-64)/70,(y-96)/128));
-    const t=v+((x+y)%2? .05:-.05)+random()*.1;
-    pc.fillStyle=t>.72?'#fff1dd':t>.48?'#dcb5d2':t>.24?'#967cba':'#594379';pc.fillRect(x,y,1,1);
-  }
-  const portalTexture=new THREE.CanvasTexture(portalCanvas);portalTexture.magFilter=THREE.LinearFilter;portalTexture.colorSpace=THREE.SRGBColorSpace;
-  const portal=new THREE.Mesh(new THREE.PlaneGeometry(4,5.2),new THREE.MeshBasicMaterial({map:portalTexture}));
-  portal.position.set(0,3.3,gateZ-.3);world.add(portal);
-  const frameMat=new THREE.MeshBasicMaterial({color:0xe7c6e0});
-  for(let i=0;i<3;i++) {
-    const w=3.65-i*.8,h=4.8-i*1.05;
-    box(.035,h,.02,-w/2,3.3,gateZ+.02,frameMat);box(.035,h,.02,w/2,3.3,gateZ+.02,frameMat);
-    box(w,.035,.02,0,3.3+h/2,gateZ+.02,frameMat);box(w,.035,.02,0,3.3-h/2,gateZ+.02,frameMat);
+  // The luminous surface follows the stone arch, with slowly orbiting strands of light.
+  const portalShape=new THREE.Shape();
+  portalShape.moveTo(-2.18,.72);portalShape.lineTo(2.18,.72);portalShape.lineTo(2.18,4.95);
+  portalShape.absellipse(0,4.95,2.18,2.02,0,Math.PI,false,0);portalShape.closePath();
+  const apertureMaterial=new THREE.ShaderMaterial({
+    uniforms:{time:{value:0}},side:THREE.DoubleSide,
+    vertexShader:`varying vec2 portalPosition;void main(){portalPosition=position.xy;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`varying vec2 portalPosition;uniform float time;
+      void main(){
+        vec2 p=(portalPosition-vec2(0.,3.7))/vec2(2.2,3.1);
+        float r=length(p),a=atan(p.y,p.x);
+        float mist=.5+.5*sin(p.x*4.+sin(p.y*3.-time*.16)+time*.2);
+        float spiral=pow(max(0.,sin(a*3.-r*13.+time*.45)),18.)*(1.-smoothstep(.15,1.25,r));
+        float halo=exp(-abs(r-.72-.04*sin(a*5.+time*.2))*45.);
+        float core=exp(-r*r*8.);
+        vec3 color=mix(vec3(.018,.04,.10),vec3(.09,.21,.25),mist*.65);
+        color+=vec3(.24,.65,.7)*spiral*.45+vec3(.6,.78,.65)*halo*.45;
+        color+=vec3(.9,.78,.55)*core*.65;
+        gl_FragColor=vec4(color,1.);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`,
+  });
+  const portal=new THREE.Mesh(new THREE.ShapeGeometry(portalShape,48),apertureMaterial);
+  portal.position.z=gateZ-.28;world.add(portal);
+  const runeMaterial=new THREE.MeshBasicMaterial({color:0xbadbd4});
+  for(let i=0;i<11;i++){
+    const a=(i+.5)/11*Math.PI;
+    const rune=new THREE.Mesh(new THREE.TorusGeometry(.09,.018,4,12),runeMaterial);
+    rune.position.set(Math.cos(a)*2.59,4.95+Math.sin(a)*2.31,gateZ+.59);world.add(rune);
   }
   // Architectural wings and buttresses anchor the gate to the landscape.
   for(const s of [-1,1]) for(let i=0;i<5;i++) {
@@ -121,7 +137,7 @@ function start() {
     // Leave the citadel stair approach clear of the gateway cliff framing.
     if(s<0&&z<-18)continue;
     const cliff=new THREE.Mesh(cragGeometry(2),naturalRock);
-    cliff.position.set(x,-2+h/2,z);cliff.scale.set(1.1+random()*.5,h*.55,1.3);cliff.rotation.y=random()*2;world.add(cliff);
+    cliff.position.set(x,-2+h/2,z);cliff.scale.set(1.1+random()*.5,h*.4,1.3);cliff.rotation.y=random()*2;world.add(cliff);
     if(i%4===0)box(.4,.05,.6,x,h-1.9,z,edge);
   }
   const lanterns = [];
@@ -166,25 +182,8 @@ function start() {
     world.add(sprite);haze.push({sprite,x,z,phase:i*1.7});
   }
   // Animated light stays inside the carved opening.
-  const portalGlow=new THREE.PointLight(0xd7a6ff,8,13,2);
+  const portalGlow=new THREE.PointLight(0x8cd8d1,8,13,2);
   portalGlow.position.set(0,3.3,gateZ+1);world.add(portalGlow);
-  const apertureMaterial=new THREE.ShaderMaterial({
-    uniforms:{time:{value:0}},transparent:true,depthWrite:false,
-    vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-    fragmentShader:`
-      varying vec2 vUv;uniform float time;
-      void main(){
-        vec2 p=vUv-.5;
-        float r=length(p*vec2(1.,.7));
-        float wave=sin(r*65.-time*1.8)*.5+.5;
-        float streak=pow(max(0.,sin(p.y*54.+time*.5)),16.);
-        float strength=(wave*.11+streak*.09)*(1.-smoothstep(.12,.6,r));
-        gl_FragColor=vec4(vec3(1.,.82,.94),strength);
-      }`,
-  });
-  const aperture=new THREE.Mesh(new THREE.PlaneGeometry(4,5.2),apertureMaterial);
-  aperture.position.set(0,3.3,gateZ-.25);world.add(aperture);
-
   // Uneven stones along the route catch moving light individually.
   const pathStones=new THREE.InstancedMesh(cragGeometry(1),naturalRock,528);
   const stonePose=new THREE.Object3D();let stoneIndex=0;
@@ -240,13 +239,15 @@ function start() {
     const density=Math.min(devicePixelRatio||1,1.5,Math.sqrt(2400000/(w*h)));
     renderer.setPixelRatio(density);
     renderer.setSize(w,h,false);
-    camera.aspect=w/h;camera.fov=w<700?53:37;camera.updateProjectionMatrix();
+    camera.aspect=w/h;camera.fov=w<700?55:45;camera.updateProjectionMatrix();
   }
   resize();window.addEventListener('resize',resize);
   const requestedTime=Number(new URLSearchParams(location.search).get('t'));
   let last=0,elapsed=Number.isFinite(requestedTime)?THREE.MathUtils.clamp(requestedTime,0,144):0;
   const position=new THREE.Vector3();
-  landscape.update(elapsed,updateDayNight(elapsed));
+  const initialDaylight=updateDayNight(elapsed);
+  landscape.update(elapsed,initialDaylight);
+  valley.update(elapsed,initialDaylight);
   cameraPath.getPoint((elapsed/tourDuration)%1,camera.position);
   targetPath.getPoint((elapsed/tourDuration)%1,gaze);
   renderer.setAnimationLoop(time=>{
@@ -266,6 +267,7 @@ function start() {
       gaze.lerp(desiredGaze,1-Math.exp(-dt*1.4));
       const daylight=updateDayNight(t);
       landscape.update(t,daylight);
+      valley.update(t,daylight);
       emissive.color.setRGB(1,.73,.4).multiplyScalar(1-.6*daylight);
 
       motes.position.y=Math.sin(t*.18)*.3;
