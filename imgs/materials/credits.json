@@ -1,0 +1,58 @@
+{
+  "stone": {
+    "asset": "medieval_blocks_03",
+    "source": "https://polyhaven.com/a/medieval_blocks_03",
+    "license": "CC0-1.0",
+    "color": "stone-color.jpg",
+    "normal": "stone-normal.jpg",
+    "roughness": "stone-roughness.jpg"
+  },
+  "tile": {
+    "asset": "roof_slates_02",
+    "source": "https://polyhaven.com/a/roof_slates_02",
+    "license": "CC0-1.0",
+    "color": "tile-color.jpg",
+    "normal": "tile-normal.jpg",
+    "roughness": "tile-roughness.jpg"
+  },
+  "wood": {
+    "asset": "medieval_wood",
+    "source": "https://polyhaven.com/a/medieval_wood",
+    "license": "CC0-1.0",
+    "color": "wood-color.jpg",
+    "normal": "wood-normal.jpg",
+    "roughness": "wood-roughness.jpg"
+  },
+  "plaster": {
+    "asset": "white_plaster_02",
+    "source": "https://polyhaven.com/a/white_plaster_02",
+    "license": "CC0-1.0",
+    "color": "plaster-color.jpg",
+    "normal": "plaster-normal.jpg",
+    "roughness": "plaster-roughness.jpg"
+  },
+  "earth": {
+    "asset": "aerial_grass_rock",
+    "source": "https://polyhaven.com/a/aerial_grass_rock",
+    "license": "CC0-1.0",
+    "color": "earth-color.jpg",
+    "normal": "earth-normal.jpg",
+    "roughness": "earth-roughness.jpg"
+  },
+  "rock": {
+    "asset": "mossy_rock",
+    "source": "https://polyhaven.com/a/mossy_rock",
+    "license": "CC0-1.0",
+    "color": "rock-color.jpg",
+    "normal": "rock-normal.jpg",
+    "roughness": "rock-roughness.jpg"
+  },
+  "bark": {
+    "asset": "pine_bark",
+    "source": "https://polyhaven.com/a/pine_bark",
+    "license": "CC0-1.0",
+    "color": "bark-color.jpg",
+    "normal": "bark-normal.jpg",
+    "roughness": "bark-roughness.jpg"
+  }
+}

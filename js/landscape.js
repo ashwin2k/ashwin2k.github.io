@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { detailedMaterial, physicalUV, cragGeometry, batchArchitecture } from './detail.js';
+import { detailedMaterial, physicalUV, cragGeometry, batchArchitecture } from './detail.js?v=cinema-1';
+import { plantForest } from './foliage.js?v=cinema-1';
 
 // Shared coordinates keep every district connected to the same valley.
 export function buildLandscape(scene) {
@@ -10,14 +11,14 @@ export function buildLandscape(scene) {
   const material = (color,kind='plaster') => detailedMaterial(color,kind);
   const stone = material(0x9185a0,'stone'), soil = material(0x57516b,'earth'), grass = material(0x728361,'earth');
   const roof = material(0x806276,'tile'), plaster = material(0xd4c1a9), wood = material(0x60504b,'wood');
-  const naturalRock=material(0x827b8e,'earth');
+  const naturalRock=material(0x827b8e,'rock');
   const pine = material(0x345646), pineLight = material(0x527153), snow = material(0xb3a9c6);
   const warm = new THREE.MeshBasicMaterial({color:0xffd8a1});
   const mesh = (geo,mat,x,y,z,parent=root) => {
     const m = new THREE.Mesh(mat.isMeshStandardMaterial?physicalUV(geo):geo,mat);m.position.set(x,y,z);m.castShadow=m.receiveShadow=!mat.transparent;parent.add(m);return m;
   };
   const box = (w,h,d,x,y,z,mat=stone,parent=root) => mesh(new THREE.BoxGeometry(w,h,d),mat,x,y,z,parent);
-  const cylinder = (r1,r2,h,x,y,z,mat=stone,n=8,parent=root) => mesh(new THREE.CylinderGeometry(r1,r2,h,Math.max(n,16)),mat,x,y,z,parent);
+  const cylinder = (r1,r2,h,x,y,z,mat=stone,n=8,parent=root) => mesh(new THREE.CylinderGeometry(r1,r2,h,Math.max(n,32)),mat,x,y,z,parent);
 
   // Continuous dry ground connects the village districts.
   const floor=mesh(new THREE.CircleGeometry(115,48),grass,0,-.12,0);
@@ -40,42 +41,35 @@ export function buildLandscape(scene) {
   terrace(-35,25,13,-1);
 
   // A mountain ring surrounds the entire map, so wide camera views remain complete.
-  const mountainMaterial=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1});
+  const mountainMaterial=material(0x989f9b,'rock');mountainMaterial.vertexColors=true;
   const mountainLow=new THREE.Color(0x5b7774),mountainHigh=new THREE.Color(0x91a5ad),snowcap=new THREE.Color(0xe0e7e1);
   for(let i=0;i<32;i++) {
-    const a=i/32*Math.PI*2,r=84+rand()*17,h=18+rand()*30;
+    const a=i/32*Math.PI*2,r=97+rand()*15,h=18+rand()*20;
     const x=Math.cos(a)*r,z=Math.sin(a)*r;
-    const mountainGeo=new THREE.ConeGeometry(11+rand()*10,h,32,10);
+    const radius=24+rand()*14;
+    const mountainGeo=new THREE.PlaneGeometry(2,2,64,64);mountainGeo.rotateX(-Math.PI/2);
     const vertices=mountainGeo.attributes.position,colors=[];
     const mountainColor=new THREE.Color();
     for(let j=0;j<vertices.count;j++){
-      const px=vertices.getX(j),py=vertices.getY(j),pz=vertices.getZ(j);
-      const angle=Math.atan2(pz,px),height=(py+h/2)/h;
-      const ridge=1+.17*Math.sin(angle*7+i)+.08*Math.sin(py*.9+angle*11);
-      vertices.setXYZ(j,px*ridge+height*height*3*Math.sin(i),py,pz*ridge+height*height*2*Math.cos(i));
-      mountainColor.copy(mountainLow).lerp(mountainHigh,height*.75);
-      const snowLine=.7+.045*Math.sin(angle*5+i)+.025*Math.sin(angle*11);
-      if(h>30)mountainColor.lerp(snowcap,THREE.MathUtils.smoothstep(height,snowLine,snowLine+.1));
+      const px=vertices.getX(j),pz=vertices.getZ(j);
+      const radial=Math.sqrt(px*px+pz*pz);
+      const ridge=.3*Math.sin(px*6+pz*3+i)+.18*Math.cos(pz*9-px*4+i)+.06*Math.sin(px*23+pz*18+i);
+      const envelope=Math.pow(Math.max(0,1-radial*radial),2);
+      const height=Math.max(0,envelope*(1+ridge));
+      vertices.setXYZ(j,px*radius,Math.max(-.12,height*h),pz*radius*(.95+Math.sin(i)*.2));
+      mountainColor.copy(mountainLow).lerp(mountainHigh,Math.min(1,height));
+      const snowLine=.66+.06*Math.sin(px*8+pz*5+i);
+      if(h>30)mountainColor.lerp(snowcap,THREE.MathUtils.smoothstep(height,snowLine,snowLine+.14));
       colors.push(mountainColor.r,mountainColor.g,mountainColor.b);
     }
     mountainGeo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
     mountainGeo.computeVertexNormals();
-    mesh(mountainGeo,mountainMaterial,x,h/2-10,z);
+    mesh(mountainGeo,mountainMaterial,x,-.2,z);
   }
 
-  const foliageGeo=cragGeometry(1);
-  function tree(x,y,z,s=1) {
-    cylinder(.1*s,.22*s,3.1*s,x,y+1.55*s,z,wood,9);
-    for(let level=0;level<4;level++) {
-      const radius=(1.25-level*.23)*s;
-      for(let branch=0;branch<5;branch++){
-        const angle=branch/5*Math.PI*2+level*.7;
-        const foliage=mesh(foliageGeo,level%2?pineLight:pine,x+Math.cos(angle)*radius*.35,y+(1.3+level*.65)*s,z+Math.sin(angle)*radius*.35);
-        foliage.scale.set(radius*.65,.52*s,radius*.65);foliage.rotation.y=angle;
-      }
-    }
-    const tip=mesh(foliageGeo,pineLight,x,y+4*s,z);tip.scale.set(.3*s,.7*s,.3*s);
-  }
+  const forestSites=[];
+  function tree(x,y,z,s=1) { forestSites.push([x,y,z,s]); }
+
   // Groves follow the outer banks; paths and plazas stay clear.
   for(let i=0;i<135;i++) {
     const side=i%2?-1:1;
@@ -239,7 +233,7 @@ export function buildLandscape(scene) {
   // Observatory on the eastern plateau: dome, telescope, terraces and a signal beam.
   cylinder(6,6.5,1,25,1.5,-24,stone,12);
   cylinder(4.5,4.8,5,25,4.4,-24,plaster,12);
-  const dome=mesh(new THREE.SphereGeometry(4.7,32,16,0,Math.PI*2,0,Math.PI/2),roof,25,6.9,-24);
+  const dome=mesh(new THREE.SphereGeometry(4.7,64,32,0,Math.PI*2,0,Math.PI/2),roof,25,6.9,-24);
   box(.3,4.2,6.8,25,8,-24,wood);
   const telescope=new THREE.Group();telescope.position.set(25,8,-24);telescope.rotation.z=-.6;root.add(telescope);
   cylinder(.55,.8,6,0,2,0,stone,8,telescope);cylinder(.7,.7,.2,0,5,0,warm,8,telescope);
@@ -548,6 +542,7 @@ export function buildLandscape(scene) {
     cobbleDummy.scale.setScalar(.4+rand()*.7);cobbleDummy.updateMatrix();blades.setMatrixAt(i,cobbleDummy.matrix);
   }
   blades.receiveShadow=true;root.add(blades);
+  plantForest(root,forestSites);
   batchArchitecture(root);
 
   return {

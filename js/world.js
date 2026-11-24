@@ -1,8 +1,9 @@
 import * as THREE from 'three';
-import { createDayNight } from './day-night.js?v=valley-4';
-import { buildLandscape } from './landscape.js?v=valley-4';
-import { buildValley } from './valley.js?v=valley-4';
-import { detailedMaterial, physicalUV, flutedColumn, cragGeometry, batchArchitecture } from './detail.js';
+import { createDayNight } from './day-night.js?v=cinema-1';
+import { buildLandscape } from './landscape.js?v=cinema-1';
+import { buildValley } from './valley.js?v=cinema-1';
+import { detailedMaterial, physicalUV, flutedColumn, cragGeometry, batchArchitecture } from './detail.js?v=cinema-1';
+import { updateFoliage } from './foliage.js?v=cinema-1';
 
 // A geometry-based world: every landmark is part of the live Three.js scene.
 const canvas = document.querySelector('#world');
@@ -34,7 +35,7 @@ function start() {
   const random = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
   const mat = color => detailedMaterial(color,'stone');
   const rock = mat(0x8d80a1), dark = mat(0x544965), edge = mat(0xa79ab7), pale = mat(0xd0c3d7);
-  const naturalRock=detailedMaterial(0x786e88,'earth');
+  const naturalRock=detailedMaterial(0x786e88,'rock');
   const emissive = new THREE.MeshBasicMaterial({ color: 0xf0bda4 });
   function box(w,h,d,x,y,z,m=rock,parent=world) {
     const mesh = new THREE.Mesh(physicalUV(new THREE.BoxGeometry(w,h,d)),m);
@@ -268,6 +269,7 @@ function start() {
       const daylight=updateDayNight(t);
       landscape.update(t,daylight);
       valley.update(t,daylight);
+      updateFoliage(t);
       emissive.color.setRGB(1,.73,.4).multiplyScalar(1-.6*daylight);
 
       motes.position.y=Math.sin(t*.18)*.3;

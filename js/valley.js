@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { detailedMaterial, physicalUV, cragGeometry, batchArchitecture } from './detail.js';
+import { detailedMaterial, physicalUV, cragGeometry, batchArchitecture } from './detail.js?v=cinema-1';
+import { plantForest } from './foliage.js?v=cinema-1';
 
 // Distant landmarks and vegetation remain real geometry, lit by the same moving sun.
 export function buildValley(scene) {
@@ -12,7 +13,7 @@ export function buildValley(scene) {
   const slate = detailedMaterial(0x42596d, 'tile');
   const timber = detailedMaterial(0x635343, 'wood');
   const linen = detailedMaterial(0xd8c7a0);
-  const rock = detailedMaterial(0x657979, 'earth');
+  const rock = detailedMaterial(0x657979, 'rock');
   const windowMaterial = new THREE.MeshBasicMaterial({ color: 0xffce81 });
   const mesh = (geometry, material, x, y, z, parent = root) => {
     const object = new THREE.Mesh(physicalUV(geometry), material);
@@ -38,12 +39,12 @@ export function buildValley(scene) {
   for (const x of [-8, 8]) {
     mesh(new THREE.CylinderGeometry(2.3, 2.8, 13, 24), stone, x, 6.5, 2, abbey);
     mesh(new THREE.CylinderGeometry(2.8, 2.8, .5, 24), darkStone, x, 12.6, 2, abbey);
-    mesh(new THREE.ConeGeometry(3.2, 6, 12), slate, x, 16, 2, abbey);
+    mesh(new THREE.ConeGeometry(3.2, 6, 48), slate, x, 16, 2, abbey);
     box(.12, 2, .12, x, 19.5, 2, darkStone, abbey);
     for (const y of [5, 9]) box(.55, 1.6, .07, x, y, 4.35, windowMaterial, abbey);
   }
   mesh(new THREE.CylinderGeometry(1.7, 2.1, 20, 16), stone, 0, 10, -3, abbey);
-  mesh(new THREE.ConeGeometry(2.7, 8, 12), slate, 0, 24, -3, abbey);
+  mesh(new THREE.ConeGeometry(2.7, 8, 48), slate, 0, 24, -3, abbey);
   for (const x of [-3.5, 0, 3.5]) {
     box(.85, 3.6, .08, x, 6, 3.55, windowMaterial, abbey);
     box(.12, 3.7, .12, x, 6, 3.65, darkStone, abbey);
@@ -67,7 +68,7 @@ export function buildValley(scene) {
   mill.position.set(-52, 0, 20);
   root.add(mill);
   mesh(new THREE.CylinderGeometry(2, 3.1, 9, 20), stone, 0, 4.5, 0, mill);
-  mesh(new THREE.ConeGeometry(3, 4, 16), slate, 0, 11, 0, mill);
+  mesh(new THREE.ConeGeometry(3, 4, 48), slate, 0, 11, 0, mill);
   box(1, 2.1, .1, 0, 1.1, 3.03, timber, mill);
   for (const y of [4.5, 7]) box(.65, 1, .08, 0, y, 2.5, windowMaterial, mill);
   const sails = new THREE.Group();
@@ -94,26 +95,8 @@ export function buildValley(scene) {
     treeSites.push([x, 0, z, .7 + random() * .8]);
   }
   treeSites.push([-20, 0, 13, .7], [16, 0, 31, 1], [-45, 0, 42, 1.1], [32, 0, 23, .9]);
-  const leaves = new THREE.InstancedMesh(cragGeometry(1), new THREE.MeshStandardMaterial({ roughness: 1 }), treeSites.length * 9);
-  const trunks = new THREE.InstancedMesh(new THREE.CylinderGeometry(.14, .28, 3.3, 7), timber, treeSites.length);
+  plantForest(root, treeSites, 'broadleaf');
   const dummy = new THREE.Object3D(), color = new THREE.Color();
-  let leafIndex = 0;
-  treeSites.forEach(([x, y, z, s], i) => {
-    dummy.position.set(x, y + 1.65 * s, z); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar(s); dummy.updateMatrix();
-    trunks.setMatrixAt(i, dummy.matrix);
-    for (let j = 0; j < 9; j++) {
-      const angle = j * 2.4, radius = j === 8 ? 0 : 1.1 * s;
-      dummy.position.set(x + Math.cos(angle) * radius, y + (3.2 + (j % 3) * .55) * s, z + Math.sin(angle) * radius);
-      dummy.scale.set((.9 + random() * .5) * s, (.8 + random() * .4) * s, s);
-      dummy.rotation.set(random() * .3, angle, .1); dummy.updateMatrix();
-      leaves.setMatrixAt(leafIndex, dummy.matrix);
-      const autumn = i % 6 === 0;
-      color.setHSL(autumn ? .085 + random() * .025 : .23 + random() * .07, autumn ? .48 : .24, .23 + random() * .13);
-      leaves.setColorAt(leafIndex++, color);
-    }
-  });
-  leaves.castShadow = leaves.receiveShadow = trunks.castShadow = true;
-  root.add(leaves, trunks);
 
   // Planted meadow pockets use instancing instead of thousands of independent objects.
   const flowers = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.07, 0), new THREE.MeshStandardMaterial({ roughness: 1 }), 2400);
