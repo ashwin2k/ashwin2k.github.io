@@ -74,7 +74,8 @@ export function batchArchitecture(root) {
   root.updateMatrixWorld(true);
   const groups=new Map(),remove=[];
   root.traverse(object=>{
-    if(!object.isMesh||!object.material.isMeshStandardMaterial||object.isInstancedMesh)return;
+    if(!object.isMesh||object.isInstancedMesh)return;
+    if(!object.material.isMeshStandardMaterial&&!(object.material.isMeshBasicMaterial&&object.userData.batch))return;
     for(let p=object;p&&p!==root.parent;p=p.parent)if(p.userData.animated)return;
     let geo=object.geometry.index?object.geometry.toNonIndexed():object.geometry.clone();
     if(!geo.attributes.uv)physicalUV(geo);

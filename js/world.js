@@ -1,9 +1,12 @@
 import * as THREE from 'three';
 import { createDayNight } from './day-night.js?v=cinema-1';
-import { buildLandscape } from './landscape.js?v=cinema-1';
-import { buildValley } from './valley.js?v=cinema-1';
-import { detailedMaterial, physicalUV, flutedColumn, cragGeometry, batchArchitecture } from './detail.js?v=cinema-1';
-import { updateFoliage } from './foliage.js?v=cinema-1';
+import { buildLandscape } from './landscape.js?v=life-1';
+import { createResidents } from './residents.js?v=life-1';
+import { createWindowLighting } from './window-lighting.js?v=life-1';
+import { createCinematicTour } from './cinematic-tour.js?v=life-1';
+import { buildValley } from './valley.js?v=life-1';
+import { detailedMaterial, physicalUV, flutedColumn, cragGeometry, batchArchitecture } from './detail.js?v=life-1';
+import { updateFoliage } from './foliage.js?v=life-1';
 
 // A geometry-based world: every landmark is part of the live Three.js scene.
 const canvas = document.querySelector('#world');
@@ -27,7 +30,10 @@ function start() {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x211442, 0.009);
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 260);
-  const landscape = buildLandscape(scene);
+  const windowLighting = createWindowLighting(scene);
+  const landscape = buildLandscape(scene,windowLighting);
+  windowLighting.finish();
+  const residents = createResidents(scene);
   const valley = buildValley(scene);
   const world = new THREE.Group();
   scene.add(world);
@@ -149,12 +155,6 @@ function start() {
     box(.19,.3,.19,x,y+.65,z,emissive);box(.4,.08,.4,x,y+.86,z,dark);
     const lamp=new THREE.PointLight(0xffc9a2,3,4,2);lamp.position.set(x,y+.7,z);world.add(lamp);lanterns.push(lamp);
   }
-  // A small explorer provides scale, with a cape and a warm lantern.
-  const explorer=new THREE.Group();world.add(explorer);explorer.position.set(-.6,-.6,2.9);
-  box(.3,.48,.23,0,.6,0,dark,explorer);box(.28,.26,.27,0,.99,0,pale,explorer);
-  box(.36,.48,.06,0,.61,.15,rock,explorer);
-  for(const s of [-1,1])box(.09,.35,.12,s*.09,.2,0,dark,explorer);
-  box(.09,.35,.12,.24,.58,0,pale,explorer);box(.12,.16,.12,.28,.32,.03,emissive,explorer);
   const dustGeo=new THREE.BufferGeometry();const dust=new Float32Array(100*3);
   for(let i=0;i<100;i++){dust[i*3]=(random()-.5)*18;dust[i*3+1]=random()*9;dust[i*3+2]=-random()*22;}
   dustGeo.setAttribute('position',new THREE.BufferAttribute(dust,3));
@@ -214,12 +214,7 @@ function start() {
 
   const updateDayNight=createDayNight(scene,renderer,camera,moonlight,rim,ambient,moon,starsMesh);
 
-  // A closed camera rail visits every district and blends its gaze independently.
-  const places=landscape.places;
-  const cameraPath=new THREE.CatmullRomCurve3(places.map(p=>new THREE.Vector3(...p.position)),true,'centripetal');
-  const targetPath=new THREE.CatmullRomCurve3(places.map(p=>new THREE.Vector3(...p.target)),true,'centripetal');
-  const hud=document.querySelector('.hud');
-  const tourDuration=144;
+  const tour=createCinematicTour();
   const gaze=new THREE.Vector3(0,3.3,gateZ),desiredGaze=new THREE.Vector3();
   const pointer={x:0,y:0},smoothPointer=new THREE.Vector2();
   window.addEventListener('pointermove',e=>{pointer.x=e.clientX/innerWidth-.5;pointer.y=e.clientY/innerHeight-.5;},{passive:true});
@@ -240,27 +235,27 @@ function start() {
     const density=Math.min(devicePixelRatio||1,1.5,Math.sqrt(2400000/(w*h)));
     renderer.setPixelRatio(density);
     renderer.setSize(w,h,false);
-    camera.aspect=w/h;camera.fov=w<700?55:45;camera.updateProjectionMatrix();
+    camera.aspect=w/h;camera.updateProjectionMatrix();
   }
   resize();window.addEventListener('resize',resize);
   const requestedTime=Number(new URLSearchParams(location.search).get('t'));
-  let last=0,elapsed=Number.isFinite(requestedTime)?THREE.MathUtils.clamp(requestedTime,0,144):0;
+  let last=0,elapsed=Number.isFinite(requestedTime)?THREE.MathUtils.clamp(requestedTime,0,3600):0;
   const position=new THREE.Vector3();
   const initialDaylight=updateDayNight(elapsed);
   landscape.update(elapsed,initialDaylight);
   valley.update(elapsed,initialDaylight);
-  cameraPath.getPoint((elapsed/tourDuration)%1,camera.position);
-  targetPath.getPoint((elapsed/tourDuration)%1,gaze);
+  camera.fov=tour.sample(elapsed,camera.position,gaze)+(camera.aspect<.9?8:0);camera.updateProjectionMatrix();
+  residents.update(elapsed);
+  windowLighting.update(elapsed,initialDaylight,camera.position);
   renderer.setAnimationLoop(time=>{
     if(!visible||document.hidden){last=time;return;}
     const dt=last?Math.min((time-last)/1000,.1):0;last=time;
     if(!paused)elapsed+=dt;
     const t=elapsed;
     if(!paused){
-      const phase=(t/tourDuration)%1;
-      cameraPath.getPoint(phase,position);
-      targetPath.getPoint(phase,desiredGaze);
-      hud.classList.toggle('on-journey',phase>.045&&phase<.96);
+      const lens=tour.sample(t,position,desiredGaze)+(camera.aspect<.9?8:0);
+      const nextFov=THREE.MathUtils.damp(camera.fov,lens,2,dt);
+      if(Math.abs(nextFov-camera.fov)>.001){camera.fov=nextFov;camera.updateProjectionMatrix();}
       smoothPointer.lerp(new THREE.Vector2(pointer.x,pointer.y),.025);
       position.x+=smoothPointer.x*.22;
       position.y+=smoothPointer.y*.12;
@@ -269,6 +264,8 @@ function start() {
       const daylight=updateDayNight(t);
       landscape.update(t,daylight);
       valley.update(t,daylight);
+      residents.update(t);
+      windowLighting.update(t,daylight,camera.position);
       updateFoliage(t);
       emissive.color.setRGB(1,.73,.4).multiplyScalar(1-.6*daylight);
 

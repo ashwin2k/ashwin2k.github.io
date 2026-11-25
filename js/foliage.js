@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { detailedMaterial } from './detail.js?v=cinema-1';
+import { detailedMaterial } from './detail.js?v=life-1';
 
 const cache = new Map();
 const clock = { value: 0 };

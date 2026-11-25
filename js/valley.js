@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { detailedMaterial, physicalUV, cragGeometry, batchArchitecture } from './detail.js?v=cinema-1';
-import { plantForest } from './foliage.js?v=cinema-1';
+import { detailedMaterial, physicalUV, cragGeometry, batchArchitecture } from './detail.js?v=life-1';
+import { plantForest } from './foliage.js?v=life-1';
 
 // Distant landmarks and vegetation remain real geometry, lit by the same moving sun.
 export function buildValley(scene) {

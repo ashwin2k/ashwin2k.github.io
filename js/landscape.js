@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import { detailedMaterial, physicalUV, cragGeometry, batchArchitecture } from './detail.js?v=cinema-1';
-import { plantForest } from './foliage.js?v=cinema-1';
+import { detailedMaterial, physicalUV, cragGeometry, batchArchitecture } from './detail.js?v=life-1';
+import { plantForest } from './foliage.js?v=life-1';
 
 // Shared coordinates keep every district connected to the same valley.
-export function buildLandscape(scene) {
+export function buildLandscape(scene, windowLighting) {
   const root = new THREE.Group();
   scene.add(root);
   let seed = 402;
@@ -14,6 +14,7 @@ export function buildLandscape(scene) {
   const naturalRock=material(0x827b8e,'rock');
   const pine = material(0x345646), pineLight = material(0x527153), snow = material(0xb3a9c6);
   const warm = new THREE.MeshBasicMaterial({color:0xffd8a1});
+  const windowGlow = new THREE.MeshBasicMaterial({color:0xffbd76});
   const mesh = (geo,mat,x,y,z,parent=root) => {
     const m = new THREE.Mesh(mat.isMeshStandardMaterial?physicalUV(geo):geo,mat);m.position.set(x,y,z);m.castShadow=m.receiveShadow=!mat.transparent;parent.add(m);return m;
   };
@@ -120,7 +121,9 @@ export function buildLandscape(scene) {
     for(const h of [.13,.52])cylinder(.345,.345,.055,x,y+h,z,iron,10,parent);
   }
   function windowAt(x,y,z,parent){
-    box(.72,.95,.08,x,y,z,wood,parent);box(.54,.75,.09,x,y,z+.05,warm,parent);
+    windowLighting.register(parent,x,y,z);
+    box(.72,.95,.08,x,y,z,wood,parent);
+    const glass=box(.54,.75,.09,x,y,z+.05,windowGlow,parent);glass.userData.batch=true;
     box(.055,.8,.12,x,y,z+.1,wood,parent);box(.58,.055,.12,x,y,z+.1,wood,parent);
     box(.87,.09,.22,x,y-.49,z,brick,parent);
     for(const side of [-1,1])box(.22,.85,.07,x+side*.49,y,z,shutter,parent);
@@ -150,6 +153,9 @@ export function buildLandscape(scene) {
       const wg=new THREE.Group();wg.position.set(side*(w/2+.04),0,0);wg.rotation.y=side*Math.PI/2;g.add(wg);
       windowAt(0,1.6,0,wg);
     }
+    const rear=new THREE.Group();rear.position.z=-d/2-.04;rear.rotation.y=Math.PI;g.add(rear);
+    for(const side of [-1,1])windowAt(side*w*.26,1.65,0,rear);
+    if(tall)for(const side of [-1,1])windowAt(side*w*.26,3.8,.16,rear);
     box(.98,1.75,.12,0,.88,d/2+.06,wood,g);
     for(let j=-2;j<=2;j++)box(.025,1.6,.03,j*.17,.86,d/2+.14,brick,g);
     for(const y of [.45,1.25])box(.8,.07,.04,0,y,d/2+.18,iron,g);
@@ -171,7 +177,7 @@ export function buildLandscape(scene) {
       // A covered porch distinguishes the inn's silhouette.
       const awning=box(w*.75,.12,1.5,0,2.35,d/2+.8,roofMat,g);awning.rotation.x=.12;
       for(const sx of [-1,1])box(.14,2.25,.14,sx*w*.34,1.13,d/2+1.4,wood,g);
-    } else if(kind==='smith'){
+    } else if(kind==='smith'||kind==='smithy'){
       box(2,1.4,1.7,w/2+1, .7,0,stone,g);
       box(1,.65,.04,w/2+1,.65,.87,wood,g);
       box(.7,.25,.05,w/2+1,.42,.9,warm,g);
@@ -487,15 +493,6 @@ export function buildLandscape(scene) {
       const pennant=mesh(geo,canvasColors[i%2],0,0,0);pennant.material.side=THREE.DoubleSide;
     }
   }
-  // Merchants and shoppers occupy the edges of the stalls, keeping the main route open.
-  for(const [i,x,z] of [[0,-19,27],[1,-11,25],[2,-8,32],[3,-18,34],[4,-16,31],[5,-22,24],[6,-4,26],[7,8,21]]){
-    const g=new THREE.Group();g.position.set(x,.12,z);g.rotation.y=i*1.7;root.add(g);
-    cylinder(.22,.32,.65,0,.78,0,wallColors[i%4],10,g);
-    mesh(new THREE.SphereGeometry(.18,10,8),terracotta,0,1.32,0,g);
-    cylinder(.24,.25,.12,0,1.49,0,roofColors[i%4],12,g);
-    for(const side of [-1,1]){box(.14,.48,.18,side*.12,.25,0,wood,g);beam([side*.22,1,0],[side*.34,.58,.08],.12,wallColors[i%4],g);}
-  }
-
   const birds=new THREE.Group();root.add(birds);
   for(let i=0;i<7;i++) {
     const geo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-.35,0,.1),new THREE.Vector3(0,-.1,0),new THREE.Vector3(.35,0,.1)]);
@@ -546,16 +543,9 @@ export function buildLandscape(scene) {
   batchArchitecture(root);
 
   return {
-    places:[
-      {name:'The gateway',description:'A lantern-lit path into the old mountains.',position:[-3.5,7.5,23],target:[-1,5,-17]},
-      {name:'Lantern village',description:'Timber cottages, a bustling market square, and the old lantern inn.',position:[-64,17,43],target:[-37,4,12]},
-      {name:'The observatory',description:'A telescope watching the sky above the eastern ridge.',position:[43,25,10],target:[18,6,-23]},
-      {name:'The high citadel',description:'Stone watchtowers guarding the village roads.',position:[24,24,-16],target:[-8,14,-53]},
-      {name:'The trade road',description:'Winding lanes between workshops, cottages, and the old gate.',position:[24,15,36],target:[3,3,19]},
-      {name:'Market square',description:'Canvas stalls, fresh produce, and lantern-lit village streets.',position:[-6,10,51],target:[-18,3,30]},
-    ],
     update(t,daylight=0) {
       warm.color.setRGB(1,.7,.32).multiplyScalar(1-daylight*.65);
+      windowGlow.color.setRGB(1,.46,.14).multiplyScalar(.9-daylight*.7);
       birds.position.set(Math.cos(t*.045)*25,15+Math.sin(t*.12)*2,-20+Math.sin(t*.045)*17);birds.rotation.y=-t*.045;
       beacon.rotation.y=t*.35;beacon.position.y=24+Math.sin(t)*.25;
       banners.forEach((banner,i)=>{banner.rotation.x=Math.sin(t*2+i)*.12;});
